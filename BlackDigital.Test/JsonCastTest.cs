@@ -1,3 +1,4 @@
+using BlackDigital.Test.Mock;
 using System.Net;
 
 namespace BlackDigital.Test
@@ -7,7 +8,7 @@ namespace BlackDigital.Test
         [Fact]
         public void JsonCast()
         {
-            var obj = new JsonTest
+            var obj = new SimpleModel
             {
                 Name = "test",
                 Value = 12,
@@ -18,7 +19,7 @@ namespace BlackDigital.Test
 
             Assert.Equal("{\"Value\":12,\"Name\":\"test\",\"HttpStatus\":\"OK\"}", json);
 
-            var objFromJson = json.To<JsonTest>();
+            var objFromJson = json.To<SimpleModel>();
 
             Assert.NotNull(objFromJson);
             Assert.Equal(obj.Name, objFromJson.Name);
@@ -30,7 +31,7 @@ namespace BlackDigital.Test
         [Fact]
         public void Clone()
         {
-            var obj = new JsonTest
+            var obj = new SimpleModel
             {
                 Name = "test",
                 Value = 12,
@@ -45,17 +46,5 @@ namespace BlackDigital.Test
             Assert.Equal(obj.HttpStatus, objFromJson.HttpStatus);
             Assert.Equal(obj.Value, objFromJson.Value);
         }
-    }
-
-
-    internal class JsonTest
-    {
-        public int Value { get; set; }
-
-        public string Name { get; set; }
-
-        public string Description { get; set; }
-
-        public HttpStatusCode HttpStatus { get; set; }
     }
 }
