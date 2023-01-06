@@ -17,26 +17,28 @@ namespace BlackDigital.DataBuilder
         
         protected readonly PropertyInfo Property;
 
-        private DisplayAttribute? DisplayAttribute =>
+        public DisplayAttribute? DisplayAttribute =>
             GetSingleAttribute<DisplayAttribute>();
 
-        private DataTypeAttribute? DataTypeAttribute =>
+        public DataTypeAttribute? DataTypeAttribute =>
             GetSingleAttribute<DataTypeAttribute>();
 
-        private ShowAttribute? ShowAttribute =>
+        public ShowAttribute? ShowAttribute =>
             GetSingleAttribute<ShowAttribute>();
 
-        private MaxLengthAttribute? MaxLengthAttribute =>
+        public MaxLengthAttribute? MaxLengthAttribute =>
             GetSingleAttribute<MaxLengthAttribute>();
-        
-        private MinLengthAttribute? MinLengthAttribute =>
+
+        public MinLengthAttribute? MinLengthAttribute =>
             GetSingleAttribute<MinLengthAttribute>();
 
-        private RangeAttribute? RangeAttribute =>
+        public RangeAttribute? RangeAttribute =>
             GetSingleAttribute<RangeAttribute>();
 
-        private EditableAttribute? EditableAttribute => 
+        public EditableAttribute? EditableAttribute => 
             GetSingleAttribute<EditableAttribute>();
+
+        public string PropertyName => Property.Name;
 
         public int Order => DisplayAttribute?.GetOrder() ?? 10000 + Type.Properties.IndexOf(this);
 
