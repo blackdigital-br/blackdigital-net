@@ -17,29 +17,6 @@ namespace BlackDigital.DataBuilder
         
         protected readonly PropertyInfo Property;
 
-        private static readonly Type[] IntegersType = new Type[]
-        {
-            typeof(sbyte),
-            typeof(short),
-            typeof(int), 
-            typeof(long)
-        };
-
-        private static readonly Type[] UnsignedIntegersType = new Type[]
-        {
-            typeof(byte),
-            typeof(ushort),
-            typeof(uint),
-            typeof(ulong)
-        };
-
-        private static readonly Type[] DecimalsType = new Type[]
-        {
-            typeof(float),
-            typeof(decimal),
-            typeof(double)
-        };
-
         private DisplayAttribute? DisplayAttribute =>
             GetSingleAttribute<DisplayAttribute>();
 
@@ -61,11 +38,13 @@ namespace BlackDigital.DataBuilder
         private EditableAttribute? EditableAttribute => 
             GetSingleAttribute<EditableAttribute>();
 
-        public int Order => DisplayAttribute?.Order ?? 10000 + Type.Properties.IndexOf(this);
+        public int Order => DisplayAttribute?.GetOrder() ?? 10000 + Type.Properties.IndexOf(this);
 
-        public string Name => DisplayAttribute?.Name ?? Property.Name;
+        public string Name => DisplayAttribute?.GetName() ?? Property.Name;
 
-        public string Description => DisplayAttribute?.Description ?? string.Empty;
+        public string Description => DisplayAttribute?.GetDescription() ?? string.Empty;
+
+        public string Prompt => DisplayAttribute?.GetPrompt() ?? string.Empty;
 
         public string ComponentType => DataTypeAttribute?.GetDataTypeName() ?? GetDataTypeFromPropertyType(Property.PropertyType);
 
@@ -79,6 +58,8 @@ namespace BlackDigital.DataBuilder
 
         public object? MaxValue => RangeAttribute?.Maximum;
 
+        public Type PropertyType => Property.PropertyType;
+
         public bool Show(object value) => ShowAttribute?.Show(value) ?? true;
 
         public TAttribute? GetSingleAttribute<TAttribute>() 
@@ -87,21 +68,26 @@ namespace BlackDigital.DataBuilder
                         .Cast<TAttribute>()
                         .SingleOrDefault();
 
+        public object? GetValue(object? model) => Property.GetValue(model);
+
+        public void SetValue(object? model, object? value) => Property.SetValue(model, value);
 
         private static string GetDataTypeFromPropertyType(Type type)
         {
-            if (type != typeof(string)
-                && typeof(IEnumerable).IsAssignableFrom(type))
+            Type? useType = Nullable.GetUnderlyingType(type);
+
+            if (useType == null)
+                useType = type;
+
+            if (useType != typeof(string)
+                && typeof(IEnumerable).IsAssignableFrom(useType))
                 return "List";
 
-            if (IntegersType.Contains(type))
-                return "Integer";
+            if (useType.IsEnum)
+                return "Enumeration";
 
-            if (UnsignedIntegersType.Contains(type))
-                return "UnsignedInteger";
-
-            if (DecimalsType.Contains(type))
-                return "Decimal";
+            if (DataTypeTable.DataType.Any(dt => dt.Value.Contains(useType)))
+                return DataTypeTable.DataType.First(dt => dt.Value.Contains(useType)).Key;
 
             return "Text";
         }
