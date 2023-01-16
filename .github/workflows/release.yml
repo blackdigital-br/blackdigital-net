@@ -4,8 +4,8 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  pull_request:
+    branches: [ "release" ]
 
 jobs:
   build:
