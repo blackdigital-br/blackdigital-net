@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlackDigital\BlackDigital.csproj" />
+    <ProjectReference Include="..\src\BlackDigital.csproj" />
   </ItemGroup>
 
 </Project>

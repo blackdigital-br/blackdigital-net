@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlackDigital", "BlackDigital\BlackDigital.csproj", "{690134DE-72F5-440F-BB6A-CA9317C65571}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlackDigital", "src\BlackDigital.csproj", "{690134DE-72F5-440F-BB6A-CA9317C65571}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackDigital.Test", "BlackDigital.Test\BlackDigital.Test.csproj", "{EBDEF7AF-88B8-4AB2-9CFD-CC72652CF9AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackDigital.Test", "test\BlackDigital.Test.csproj", "{EBDEF7AF-88B8-4AB2-9CFD-CC72652CF9AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
