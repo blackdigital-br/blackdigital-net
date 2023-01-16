@@ -59,5 +59,13 @@ namespace BlackDigital
             itens.RemoveAll(string.IsNullOrWhiteSpace);
             return string.Join("&", itens);
         }
+
+        public static T? CloneOject<T>(this T item)
+        {
+            if (item == null)
+                return default;
+
+            return item.ToJson().To<T>();
+        }
     }
 }

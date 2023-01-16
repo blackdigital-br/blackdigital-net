@@ -3,6 +3,26 @@ namespace BlackDigital.Test
 {
     public class DateTimeHelperTest
     {
+        [Fact(DisplayName = "Get Month From Mid Month Date")]
+        public void GetMonthFromMidDate()
+        {
+            var midDate = new DateTime(2022, 11, 15, 12, 33, 34);
+            var monthDate = midDate.ToMonthDate();
+
+            Assert.NotEqual(midDate, monthDate);
+            Assert.Equal(monthDate, new DateTime(2022, 11, 1));
+        }
+
+        [Fact(DisplayName = "Get Month From Mid Month Date Offset")]
+        public void GetMonthFromMidDateOffset()
+        {
+            var midDate = new DateTimeOffset(new DateTime(2022, 11, 15, 12, 33, 34));
+            var monthDate = midDate.ToMonthDate();
+
+            Assert.NotEqual(midDate, monthDate);
+            Assert.Equal(monthDate, new DateTimeOffset(new DateTime(2022, 11, 1, 0, 0, 0, DateTimeKind.Utc)));
+        }
+
         [Fact]
         public void MonthCast()
         {

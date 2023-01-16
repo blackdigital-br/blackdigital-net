@@ -44,13 +44,5 @@ namespace BlackDigital
         {
             return JsonSerializer.Serialize(item, Options);
         }
-
-        public static T? CloneOject<T>(this T item) 
-        {
-            if (item == null)
-                return default;
-
-            return item.ToJson().To<T>();
-        }
     }
 }
