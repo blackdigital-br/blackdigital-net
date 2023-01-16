@@ -25,7 +25,7 @@ jobs:
     - name: Build
       run: dotnet build -p:Version='${{ env.lib_version }}' -c Release
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --verbosity normal
     - name: Pack nugets
       run: dotnet pack -p:PackageVersion='${{ env.lib_version }}' -c Release
     - name: Push to NuGet
