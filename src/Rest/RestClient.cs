@@ -14,10 +14,16 @@ namespace BlackDigital.Rest
             
         }
 
-        public RestClient(string baseAddress)
+        public RestClient(string baseAddress, HttpMessageHandler? hanlder = null)
         {
             CustomHeaders = new();
-            Client = new();
+            HttpHandler = hanlder;
+
+            if (hanlder != null)
+                Client = new(hanlder);
+            else
+                Client = new();
+            
             Client.BaseAddress = new Uri(baseAddress);
         }
 
@@ -30,17 +36,22 @@ namespace BlackDigital.Rest
         public event Action? ServerError;
 
         private HttpClient Client;
-        private Dictionary<string, List<string>> CustomHeaders;
+        protected internal HttpMessageHandler? HttpHandler;
+        protected Dictionary<string, List<string>> CustomHeaders;
 
         #endregion "Properties"
 
         #region "Client Methods"
+
+        private const string Authorization = "Authorization";
 
         public Task<HttpResponseMessage> GetAsync(string requestUri) => Client.GetAsync(requestUri);
         public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content) => Client.PostAsync(requestUri, content);
         public Task<HttpResponseMessage> PutAsync(string requestUri, HttpContent content) => Client.PutAsync(requestUri, content);
         public Task<HttpResponseMessage> DeleteAsync(string requestUri) => Client.DeleteAsync(requestUri);
         public Task<byte[]> GetByteArrayAsync(string requestUri) => Client.GetByteArrayAsync(requestUri);
+
+        //protected virtual Task<HttpResponseMessage> SendAsync(HttpRequestMessage request) => Client.SendAsync(request);
 
         #endregion "Client Methods"
 
@@ -234,11 +245,12 @@ namespace BlackDigital.Rest
 
         public RestClient AddAuthentication(AuthenticationHeaderValue customAuthentication)
         {
-            if (CustomHeaders.ContainsKey(customAuthentication.Scheme))
-                CustomHeaders[customAuthentication.Scheme].Add(customAuthentication.Parameter);
-            else
-                CustomHeaders.Add(customAuthentication.Scheme, 
-                    new List<string>() { customAuthentication.Parameter });
+            if (CustomHeaders.ContainsKey(Authorization))
+                CustomHeaders.Remove(Authorization);
+
+            
+            CustomHeaders.Add(Authorization,
+                    new List<string>() { $"{customAuthentication.Scheme} {customAuthentication.Parameter}" });
 
             UpdateHeaders();
 
