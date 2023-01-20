@@ -40,6 +40,11 @@ namespace BlackDigital
             return JsonSerializer.Deserialize<T>(json, Options);
         }
 
+        public static object? To(this string json, Type type)
+        {
+            return JsonSerializer.Deserialize(json, type, Options);
+        }
+
         public static string ToJson(this object item)
         {
             return JsonSerializer.Serialize(item, Options);

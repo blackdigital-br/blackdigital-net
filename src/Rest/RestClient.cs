@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 
 namespace BlackDigital.Rest
@@ -56,6 +57,40 @@ namespace BlackDigital.Rest
         #endregion "Client Methods"
 
         #region "Rest Methods"
+
+
+        internal protected virtual async Task<object?> RequestAsync(HttpMethod method,
+                                                                    string url,
+                                                                    Type? responseType = null,
+                                                                    object? content = null,
+                                                                    Dictionary<string, string>? headers = null,
+                                                                    bool thrownError = true)
+        {
+            HttpContent? httpContent = null;
+
+            if (content != null)
+            {
+                string jsonString = JsonCast.ToJson(content);
+                httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            }
+
+            var httpResponse = await RequestAsync(method, url, httpContent, headers, thrownError);
+
+            if (responseType == null)
+                return httpResponse.IsSuccessStatusCode;
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                var responseAsString = await httpResponse.Content.ReadAsStringAsync();
+
+                if (responseType == typeof(string))
+                    return (string)(object)responseAsString;
+
+                return JsonCast.To(responseAsString, responseType);
+            }
+
+            return null;
+        }
 
         protected virtual async Task<HttpResponseMessage> RequestAsync(HttpMethod method, 
                                                           string url, 

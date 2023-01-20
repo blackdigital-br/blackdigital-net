@@ -26,6 +26,13 @@ namespace BlackDigital.Test.Mock
             return this;
         }
 
+        public HttpMessageHandlerMock AddResponse(string url, HttpResponseMessage response)
+        {
+            Responses.Add(url, response);
+
+            return this;
+        }
+
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             LastRequest = request;
