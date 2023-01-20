@@ -17,7 +17,7 @@ namespace BlackDigital.Test.Rest
 
             client.AddAuthentication(new AuthenticationHeaderValue("bearer", "ABCDEFGHIJKLMNOPQRSTUWXYZ"));
 
-            var test = await client.GetRest<bool>("test");
+            var test = await client.GetRestAsync<bool>("test");
 
             Assert.NotNull(client.LastRequest);
             Assert.Equal(1, client.LastRequest?.Headers.Count() ?? 0);
@@ -32,7 +32,7 @@ namespace BlackDigital.Test.Rest
 
             client.AddHeader("APP-TOKEN", "ABCDEFGHIJKLMNOPQRSTUWXYZ");
 
-            var test = await client.GetRest<bool>("test");
+            var test = await client.GetRestAsync<bool>("test");
 
             Assert.NotNull(client.LastRequest);
             Assert.Equal(1, client.LastRequest?.Headers.Count() ?? 0);

@@ -57,7 +57,7 @@ namespace BlackDigital.Rest
 
         #region "Rest Methods"
 
-        protected virtual async Task<HttpResponseMessage> Request(HttpMethod method, 
+        protected virtual async Task<HttpResponseMessage> RequestAsync(HttpMethod method, 
                                                           string url, 
                                                           HttpContent? content = null,
                                                           Dictionary<string, string>? headers = null, 
@@ -109,9 +109,9 @@ namespace BlackDigital.Rest
 
         }
 
-        public async Task<T?> GetRest<T>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<T?> GetRestAsync<T>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
-            var httpResponse = await Request(HttpMethod.Get, url, null, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Get, url, null, headers, thrownError);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -126,12 +126,12 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<TReturn?> PostRest<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<TReturn?> PostRestAsync<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
             string jsonString = JsonCast.ToJson(sender);
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var httpResponse = await Request(HttpMethod.Post, url, stringContent, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, thrownError);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -146,19 +146,19 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<bool> PostRest<TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<bool> PostRestAsync<TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
             string jsonString = JsonCast.ToJson(sender);
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var httpResponse = await Request(HttpMethod.Post, url, stringContent, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, thrownError);
 
             return httpResponse.IsSuccessStatusCode;
         }
 
-        public async Task<TReturn?> PostRest<TReturn>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<TReturn?> PostRestAsync<TReturn>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
-            var httpResponse = await Request(HttpMethod.Post, url, null, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Post, url, null, headers, thrownError);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -173,12 +173,12 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<TReturn?> PutRest<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<TReturn?> PutRestAsync<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
             string jsonString = JsonCast.ToJson(sender);
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var httpResponse = await Request(HttpMethod.Put, url, stringContent, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Put, url, stringContent, headers, thrownError);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -193,19 +193,19 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<bool> PutRest<TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<bool> PutRestAsync<TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
             string jsonString = JsonCast.ToJson(sender);
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var httpResponse = await Request(HttpMethod.Put, url, stringContent, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Put, url, stringContent, headers, thrownError);
 
             return httpResponse.IsSuccessStatusCode;
         }
 
-        public async Task<TReturn?> PutRest<TReturn>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<TReturn?> PutRestAsync<TReturn>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
-            var httpResponse = await Request(HttpMethod.Put, url, null, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Put, url, null, headers, thrownError);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -220,9 +220,9 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<bool> DeleteRest(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<bool> DeleteRestAsync(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
-            var httpResponse = await Request(HttpMethod.Put, url, null, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Put, url, null, headers, thrownError);
 
             return httpResponse.IsSuccessStatusCode;
         }
