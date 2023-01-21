@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlackDigital.Test.Mock
 {
-    internal class SimpleModel
+    public class SimpleModel
     {
         public int Value { get; set; }
 

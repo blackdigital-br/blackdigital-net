@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlackDigital.Test.Mock
 {
-    internal class ComplexModel
+    public class ComplexModel
     {
         public int Id { get; set; }
 
