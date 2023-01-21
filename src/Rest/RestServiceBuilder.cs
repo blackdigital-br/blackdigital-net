@@ -1,7 +1,5 @@
-﻿
-using System.Reflection;
+﻿using System.Reflection;
 using System.Reflection.Emit;
-using Microsoft.Extensions.DependencyInjection;
 using TypeBuilder = System.Reflection.Emit.TypeBuilder;
 
 namespace BlackDigital.Rest
@@ -12,17 +10,11 @@ namespace BlackDigital.Rest
 
         public RestServiceBuilder() { }
 
-        public RestServiceBuilder(IServiceCollection serviceCollection) 
-        {
-            ServiceCollection = serviceCollection;
-        }
-
         #endregion "Constructors"
 
         #region "Properties"
 
         private List<Type> Services = new();
-        private IServiceCollection? ServiceCollection;
         private const string ASSEMBLYNAME = "BlackDigital.Rest.Services";
 
         #endregion "Properties"
@@ -46,11 +38,7 @@ namespace BlackDigital.Rest
 
             foreach (var interfaceType in Services)
             {
-                var serviceType = BuildType(moduleBuilder, interfaceType);
-
-                servicesBuilded.Add(interfaceType, serviceType);
-
-                ServiceCollection?.AddScoped(interfaceType, serviceType);
+                servicesBuilded.Add(interfaceType, BuildType(moduleBuilder, interfaceType));
             }
 
             return servicesBuilded;

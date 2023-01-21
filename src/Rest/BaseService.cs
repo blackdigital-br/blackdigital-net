@@ -1,12 +1,12 @@
-﻿using System;
-using System.Reflection;
-using System.Security.Cryptography;
+﻿using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace BlackDigital.Rest
 {
     public abstract class BaseService<BaseType>
     {
+        #region "Constructors"
+
         public BaseService(RestClient client)
         {
             Client = client;
@@ -15,9 +15,17 @@ namespace BlackDigital.Rest
                                                 .ToList();
         }
 
+        #endregion "Constructors"
+
+        #region "Properties"
+
         protected readonly RestClient Client;
 
         private List<Attribute> ServiceAttributes;
+
+        #endregion "Properties"
+
+        #region "Methods"
 
         protected async Task<T> ExecuteRequest<T>(string name, Dictionary<string, object> arguments)
         {
@@ -177,5 +185,7 @@ namespace BlackDigital.Rest
 
             return methodInfo.ReturnType;
         }
+
+        #endregion "Methods"
     }
 }
