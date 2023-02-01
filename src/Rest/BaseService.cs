@@ -32,7 +32,7 @@ namespace BlackDigital.Rest
             if (Client == null)
                 throw new ArgumentNullException("RestClient");
 
-            var methodInfo = typeof(BaseType).GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+            var methodInfo = typeof(BaseType).GetMethods(BindingFlags.Public | BindingFlags.Instance)
                                              .Where(x => x.Name == name && x.GetParameters().Length == arguments.Count)
                                              .SingleOrDefault();
 
