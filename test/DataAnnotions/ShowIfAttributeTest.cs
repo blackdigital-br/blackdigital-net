@@ -10,7 +10,7 @@ namespace BlackDigital.Test.DataAnnotions
         [Fact]
         public void ShowAttribute()
         {
-            ShowIfAttribute showIfAttributte = new("HttpStatus", HttpStatusCode.OK, 
+            ShowIfPropertyAttribute showIfAttributte = new("HttpStatus", HttpStatusCode.OK, 
                                                                  HttpStatusCode.Created, 
                                                                  HttpStatusCode.Accepted,
             HttpStatusCode.NoContent);
@@ -29,7 +29,7 @@ namespace BlackDigital.Test.DataAnnotions
         [Fact]
         public void ShowAttributeInverted()
         {
-            ShowIfAttribute showIfAttributte = new("HttpStatus", HttpStatusCode.OK,
+            ShowIfPropertyAttribute showIfAttributte = new("HttpStatus", HttpStatusCode.OK,
                                                                  HttpStatusCode.Created,
                                                                  HttpStatusCode.Accepted,
                                                                  HttpStatusCode.NoContent)

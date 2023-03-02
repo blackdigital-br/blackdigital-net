@@ -1,41 +1,21 @@
-﻿using System.Reflection;
-
+﻿
 namespace BlackDigital.DataAnnotations
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class ShowIfAttribute : ShowAttribute
+    public class ShowIfAttribute<T> : ShowAttribute
     {
-        public ShowIfAttribute(string otherProperty, object otherPropertyValue, params object[] otherPropertyValues)
+        public ShowIfAttribute(Func<T, bool> showValidation)
         {
-            OtherProperty = otherProperty;
-            OtherPropertyValues = new(otherPropertyValues);
-            IsInverted = false;
-
-            OtherPropertyValues.Insert(0, otherPropertyValue);
+            ShowValidation = showValidation;
         }
 
-        public string OtherProperty { get; private set; }
-
-        public List<object> OtherPropertyValues { get; private set; }
-        public bool IsInverted { get; set; }
+        public Func<T, bool> ShowValidation { get; protected set; }
 
         public override bool Show(object value)
         {
-            if (value== null) return false;
-
-            PropertyInfo? otherProperty = value.GetType().GetProperty(this.OtherProperty);
-            if (otherProperty == null)
+            if (value is T t)
             {
-                return false;
-            }
-
-            object? otherValue = otherProperty.GetValue(value);
-
-            // check if this value is actually required and validate it
-            if (!this.IsInverted && OtherPropertyValues.Any(val => object.Equals(otherValue, val)) ||
-                this.IsInverted && !OtherPropertyValues.Any(val => object.Equals(otherValue, val)))
-            {
-                return true;
+                return ShowValidation(t);
             }
 
             return false;
