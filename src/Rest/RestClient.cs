@@ -115,6 +115,11 @@ namespace BlackDigital.Rest
                 {
                     Unauthorized?.Invoke();
                 }
+                else if (thrownError && httpResponse.StatusCode.IsClientError())
+                {
+                    var responseAsString = await httpResponse.Content.ReadAsStringAsync();
+                    BusinessException.Throw(responseAsString, (int)httpResponse.StatusCode);
+                }
                 else if (thrownError && httpResponse.StatusCode.IsServerError())
                     throw new Exception("Connection error");
 

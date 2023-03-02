@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Net;
 using System.Reflection;
 using System.Web;
 
@@ -6,6 +7,31 @@ namespace BlackDigital
 {
     public static class HttpHelper
     {
+        public static bool IsInformational(this HttpStatusCode httpStatus)
+        {
+            return (int)httpStatus >= 100 && (int)httpStatus <= 199;
+        }
+
+        public static bool IsSuccess(this HttpStatusCode httpStatus)
+        {
+            return (int)httpStatus >= 200 && (int)httpStatus <= 299;
+        }
+
+        public static bool IsRedirection(this HttpStatusCode httpStatus)
+        {
+            return (int)httpStatus >= 300 && (int)httpStatus <= 399;
+        }
+
+        public static bool IsClientError(this HttpStatusCode httpStatus)
+        {
+            return (int)httpStatus >= 400 && (int)httpStatus <= 499;
+        }
+
+        public static bool IsServerError(this HttpStatusCode httpStatus)
+        {
+            return (int)httpStatus >= 500 && (int)httpStatus <= 599;
+        }
+
         public static T FromQueryString<T>(this string queryString)
             => (T)FromQueryString(queryString, typeof(T));
 

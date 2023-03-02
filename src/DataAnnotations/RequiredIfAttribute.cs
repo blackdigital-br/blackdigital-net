@@ -1,67 +1,46 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BlackDigital.DataAnnotations
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class RequiredIfAttribute : ValidationAttribute
+    public class RequiredIfAttribute<T> : ValidationAttribute
     {
-        public RequiredIfAttribute(string otherProperty, object otherPropertyValue, params object[] otherPropertyValues)
-        : base("'{0}' is required")
+        public RequiredIfAttribute(Func<T, bool> requiredValidation)
         {
-            this.OtherProperty = otherProperty;
-            this.OtherPropertyValues = new(otherPropertyValues);
-            this.IsInverted = false;
-
-            OtherPropertyValues.Insert(0, otherPropertyValue);
-        }
-
-        public string OtherProperty { get; private set; }
-
-        public List<object> OtherPropertyValues { get; private set; }
-
-        public bool IsInverted { get; set; }
-
-        public override bool RequiresValidationContext
-        {
-            get { return true; }
-        }
-
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-        {
-            if (validationContext == null)
+            RequiredValidation = (T, validationContext) =>
             {
-                throw new ArgumentNullException("validationContext");
-            }
-
-            PropertyInfo otherProperty = validationContext.ObjectType.GetProperty(this.OtherProperty);
-            if (otherProperty == null)
-            {
-                return new ValidationResult(
-                    string.Format(CultureInfo.CurrentCulture, "Could not find a property named '{0}'.", this.OtherProperty));
-            }
-
-            object otherValue = otherProperty.GetValue(validationContext.ObjectInstance);
-
-            // check if this value is actually required and validate it
-            if (!this.IsInverted && OtherPropertyValues.Any(val => object.Equals(otherValue, val)) ||
-                this.IsInverted && !OtherPropertyValues.Any(val => object.Equals(otherValue, val)))
-            {
-                if (value == null)
+                if (requiredValidation(T))
+                {
+                    return ValidationResult.Success;
+                }
+                else
                 {
                     return new ValidationResult(this.FormatErrorMessage(validationContext.DisplayName));
                 }
+            };
+        }
 
-                // additional check for strings so they're not empty
-                string val = value as string;
-                if (val != null && val.Trim().Length == 0)
-                {
-                    return new ValidationResult(this.FormatErrorMessage(validationContext.DisplayName));
-                }
-            }
+        public RequiredIfAttribute(Func<T, ValidationContext, ValidationResult> requiredValidation)
+        {
+            RequiredValidation = requiredValidation;
+        }
 
-            return ValidationResult.Success;
+        public Func<T, ValidationContext, ValidationResult> RequiredValidation { get; protected set; }
+
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            if (RequiredValidation == null)
+                throw new ArgumentNullException("RequiredValidation");
+
+            if (value is T)
+                return RequiredValidation((T)value, validationContext);
+
+            return new ValidationResult(this.FormatErrorMessage(validationContext.DisplayName));
         }
     }
 }
