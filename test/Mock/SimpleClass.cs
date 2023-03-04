@@ -1,10 +1,14 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace BlackDigital.Test.Mock
 {
     public class SimpleClass
     {
+        [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        [Required]
+        public string Name;
     }
 }

@@ -18,25 +18,25 @@ namespace BlackDigital.DataBuilder
         protected readonly PropertyInfo Property;
 
         public DisplayAttribute? DisplayAttribute =>
-            GetSingleAttribute<DisplayAttribute>();
+            Property.GetSingleAttribute<DisplayAttribute>();
 
         public DataTypeAttribute? DataTypeAttribute =>
-            GetSingleAttribute<DataTypeAttribute>();
+            Property.GetSingleAttribute<DataTypeAttribute>();
 
         public ShowAttribute? ShowAttribute =>
-            GetSingleAttribute<ShowAttribute>();
+            Property.GetSingleAttribute<ShowAttribute>();
 
         public MaxLengthAttribute? MaxLengthAttribute =>
-            GetSingleAttribute<MaxLengthAttribute>();
+            Property.GetSingleAttribute<MaxLengthAttribute>();
 
         public MinLengthAttribute? MinLengthAttribute =>
-            GetSingleAttribute<MinLengthAttribute>();
+            Property.GetSingleAttribute<MinLengthAttribute>();
 
         public RangeAttribute? RangeAttribute =>
-            GetSingleAttribute<RangeAttribute>();
+            Property.GetSingleAttribute<RangeAttribute>();
 
         public EditableAttribute? EditableAttribute => 
-            GetSingleAttribute<EditableAttribute>();
+            Property.GetSingleAttribute<EditableAttribute>();
 
         public string PropertyName => Property.Name;
 
@@ -63,12 +63,6 @@ namespace BlackDigital.DataBuilder
         public Type PropertyType => Property.PropertyType;
 
         public bool Show(object value) => ShowAttribute?.Show(value) ?? true;
-
-        public TAttribute? GetSingleAttribute<TAttribute>() 
-            where TAttribute : Attribute =>
-                Property.GetCustomAttributes(typeof(TAttribute), true)
-                        .Cast<TAttribute>()
-                        .SingleOrDefault();
 
         public object? GetValue(object? model) => Property.GetValue(model);
 
