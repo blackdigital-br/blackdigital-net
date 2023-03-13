@@ -38,7 +38,7 @@ namespace BlackDigital.Test
                 HttpStatus = HttpStatusCode.OK,
             };
 
-            var objFromJson = obj.CloneOject();
+            var objFromJson = obj.CloneObject();
 
             Assert.NotNull(objFromJson);
             Assert.Equal(obj.Name, objFromJson.Name);
