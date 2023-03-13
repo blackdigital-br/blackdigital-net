@@ -16,7 +16,7 @@ namespace BlackDigital.DataAnnotations
             {
                 if (requiredValidation(T))
                 {
-                    return ValidationResult.Success;
+                    return ValidationResult.Success ?? new(null);
                 }
                 else
                 {
