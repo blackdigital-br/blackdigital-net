@@ -9,6 +9,8 @@ namespace BlackDigital
 {
     public static class ObjectHelper
     {
+        public static string CreateId() => Guid.NewGuid().ToString().Replace("-", "");
+
         public static string ToQueryString<T>(this T item, string fieldPrefix = "")
         {
             string prefix = string.IsNullOrEmpty(fieldPrefix) ? "" : $"{fieldPrefix}=";
@@ -60,7 +62,7 @@ namespace BlackDigital
             return string.Join("&", itens);
         }
 
-        public static T? CloneOject<T>(this T item)
+        public static T? CloneObject<T>(this T item)
         {
             if (item == null)
                 return default;
