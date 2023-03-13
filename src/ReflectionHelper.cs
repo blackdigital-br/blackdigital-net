@@ -1,4 +1,5 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace BlackDigital
@@ -82,5 +83,10 @@ namespace BlackDigital
                         .SingleOrDefault();
 
 
+        public static DisplayAttribute? GetDisplay(this PropertyInfo property)
+            => property.GetSingleAttribute<DisplayAttribute>();
+
+        public static string GetDisplayName(this PropertyInfo property)
+            => property.GetDisplay()?.Name ?? property.Name;
     }
 }
