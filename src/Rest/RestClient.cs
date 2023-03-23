@@ -121,7 +121,7 @@ namespace BlackDigital.Rest
                     BusinessException.Throw(responseAsString, (int)httpResponse.StatusCode);
                 }
                 else if (thrownError && httpResponse.StatusCode.IsServerError())
-                    throw new Exception("Connection error");
+                    throw new Exception("Connection error", new(await httpResponse.Content.ReadAsStringAsync()));
 
                 return httpResponse;
             }
