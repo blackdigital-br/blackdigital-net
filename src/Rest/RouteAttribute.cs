@@ -2,9 +2,9 @@
 namespace BlackDigital.Rest
 {
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
-    public class FromHeaderAttribute : Attribute
+    public class RouteAttribute : Attribute
     {
-        public FromHeaderAttribute(string? name = null)
+        public RouteAttribute(string? name = null)
         {
             Name = name;
         }

@@ -71,7 +71,7 @@ namespace BlackDigital.Rest
                                      ActionAttribute actionAttribute,
                                      Dictionary<string, object> arguments)
         {
-            var parameters = RestParameter<FromRouteAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
+            var parameters = RestParameter<RouteAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
 
             var urls = new List<string?>()
             {
@@ -93,7 +93,7 @@ namespace BlackDigital.Rest
                                      ActionAttribute actionAttribute,
                                      Dictionary<string, object> arguments)
         {
-            var parameters = RestParameter<FromHeaderAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
+            var parameters = RestParameter<HeaderAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
 
             Dictionary<string, string> headers = new();
 
@@ -107,7 +107,7 @@ namespace BlackDigital.Rest
                                      ActionAttribute actionAttribute,
                                      Dictionary<string, object> arguments)
         {
-            var parameters = RestParameter<FromBodyAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
+            var parameters = RestParameter<BodyAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
 
             if (parameters.Count <= 0)
                 return null;
@@ -116,7 +116,7 @@ namespace BlackDigital.Rest
             return parameter.Value;
         }
 
-        private string? GetRouteUrl(string? route, List<RestParameter<FromRouteAttribute>> arguments)
+        private string? GetRouteUrl(string? route, List<RestParameter<RouteAttribute>> arguments)
         {
             if (route == null)
                 return null;
@@ -145,7 +145,7 @@ namespace BlackDigital.Rest
                                          ActionAttribute actionAttribute,
                                          Dictionary<string, object> arguments)
         {
-            var parameters = RestParameter<FromQueryAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
+            var parameters = RestParameter<QueryAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
 
             if (parameters.Count <= 0)
                 return url;

@@ -2,9 +2,9 @@
 namespace BlackDigital.Rest
 {
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
-    public class FromQueryAttribute : Attribute
+    public class QueryAttribute : Attribute
     {
-        public FromQueryAttribute(QueryParameterType type = QueryParameterType.Raw, string name = null)
+        public QueryAttribute(QueryParameterType type = QueryParameterType.Raw, string name = null)
         {
             Type = type;
             Name = name;
