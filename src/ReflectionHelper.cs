@@ -92,7 +92,9 @@ namespace BlackDigital
 
         public static CustomAttributeBuilder? CreateCustomAttribute(Type attributeType,
                                                                     IEnumerable<Type>? argsTypes = null,
-                                                                    IEnumerable<object>? argsValues = null)
+                                                                    IEnumerable<object>? argsValues = null,
+                                                                    IEnumerable<PropertyInfo>? propertyInfos = null,
+                                                                    IEnumerable<object>? provertyValues = null)
         {
             argsTypes ??= Array.Empty<Type>();
             argsValues ??= Array.Empty<object>();
@@ -103,12 +105,14 @@ namespace BlackDigital
 
             return new CustomAttributeBuilder(constructor,
                                               argsValues.ToArray(),
-                                              Array.Empty<PropertyInfo>(),
-                                              Array.Empty<object>());
+                                              propertyInfos?.ToArray() ?? Array.Empty<PropertyInfo>(),
+                                              provertyValues?.ToArray() ?? Array.Empty<object>());
         }
 
         public static CustomAttributeBuilder? CreateCustomAttribute<TAttribute>(IEnumerable<Type>? argsTypes = null, 
-                                                                                IEnumerable<object>? argsValues = null)
+                                                                                IEnumerable<object>? argsValues = null,
+                                                                                IEnumerable<PropertyInfo>? propertyInfos = null,
+                                                                                IEnumerable<object>? propertyValues = null)
             where TAttribute : Attribute
         {
             return CreateCustomAttribute(typeof(TAttribute), argsTypes, argsValues);
@@ -116,10 +120,12 @@ namespace BlackDigital
 
         public static void AddCustomAttributeToType<TAttribute>(this TypeBuilder typeBuilder,
                                                                    IEnumerable<Type>? argsTypes = null, 
-                                                                   IEnumerable<object>? argsValues = null)
+                                                                   IEnumerable<object>? argsValues = null,
+                                                                   IEnumerable<PropertyInfo>? propertyInfos = null,
+                                                                   IEnumerable<object>? propertyValues = null)
             where TAttribute : Attribute
         {
-            CustomAttributeBuilder? attributeBuilder = CreateCustomAttribute<TAttribute>(argsTypes, argsValues);
+            CustomAttributeBuilder? attributeBuilder = CreateCustomAttribute<TAttribute>(argsTypes, argsValues, propertyInfos, propertyValues);
             
             if (attributeBuilder != null)
                 typeBuilder.SetCustomAttribute(attributeBuilder);
@@ -167,9 +173,11 @@ namespace BlackDigital
         public static void AddCustomAttributeToParameter(this ParameterBuilder parameterBuilder,
                                                       Type attributeType,
                                                       IEnumerable<Type>? argsTypes = null,
-                                                      IEnumerable<object>? argsValues = null)
+                                                      IEnumerable<object>? argsValues = null,
+                                                      IEnumerable<PropertyInfo>? propertyInfos = null,
+                                                      IEnumerable<object>? propertyValues = null)
         {
-            CustomAttributeBuilder? attributeBuilder = CreateCustomAttribute(attributeType, argsTypes, argsValues);
+            CustomAttributeBuilder? attributeBuilder = CreateCustomAttribute(attributeType, argsTypes, argsValues, propertyInfos, propertyValues);
 
             if (attributeBuilder != null)
                 parameterBuilder.SetCustomAttribute(attributeBuilder);
@@ -177,15 +185,12 @@ namespace BlackDigital
 
         public static void AddCustomAttributeToParameter<TAttribute>(this ParameterBuilder parameterBuilder,
                                                                    IEnumerable<Type>? argsTypes = null,
-                                                                   IEnumerable<object>? argsValues = null)
+                                                                   IEnumerable<object>? argsValues = null,
+                                                                   IEnumerable<PropertyInfo>? propertyInfos = null,
+                                                                   IEnumerable<object>? propertyValues = null)
             where TAttribute : Attribute
         {
-            AddCustomAttributeToParameter(parameterBuilder, typeof(TAttribute), argsTypes, argsValues);
-        }
-
-        public static void AddCustomAttributeToParameter<TAttribute>(this ParameterBuilder parameterBuilder, params object[] args)
-        {
-            AddCustomAttributeToParameter<TAttribute>(parameterBuilder, args.Select(a => a.GetType()), args);
+            AddCustomAttributeToParameter(parameterBuilder, typeof(TAttribute), argsTypes, argsValues, propertyInfos, propertyValues);
         }
 
         public static void AddCustomAttributeToParameter(this ParameterBuilder parameterBuilder, Type attribute, params object[] args)
