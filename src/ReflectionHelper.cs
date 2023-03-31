@@ -19,6 +19,8 @@ namespace BlackDigital
                         .Cast<TAttribute>()
                         .SingleOrDefault();*/
 
+        #region "Get Attributes"
+
         public static TAttribute[] GetAttributes<TAttribute>(this Type type)
             where TAttribute : Attribute =>
                 type.GetCustomAttributes(typeof(TAttribute), true)
@@ -83,12 +85,19 @@ namespace BlackDigital
                         .Cast<TAttribute>()
                         .SingleOrDefault();
 
+        #endregion "Get Attributes"
+
+        #region "Get Data From Attributes"
 
         public static DisplayAttribute? GetDisplay(this PropertyInfo property)
             => property.GetSingleAttribute<DisplayAttribute>();
 
         public static string GetDisplayName(this PropertyInfo property)
             => property.GetDisplay()?.Name ?? property.Name;
+
+        #endregion "Get Data From Attributes"
+
+        #region "Create Attributes"
 
         public static CustomAttributeBuilder? CreateCustomAttribute(Type attributeType,
                                                                     IEnumerable<Type>? argsTypes = null,
@@ -115,8 +124,10 @@ namespace BlackDigital
                                                                                 IEnumerable<object>? propertyValues = null)
             where TAttribute : Attribute
         {
-            return CreateCustomAttribute(typeof(TAttribute), argsTypes, argsValues);
+            return CreateCustomAttribute(typeof(TAttribute), argsTypes, argsValues, propertyInfos, propertyValues);
         }
+
+
 
         public static void AddCustomAttributeToType<TAttribute>(this TypeBuilder typeBuilder,
                                                                    IEnumerable<Type>? argsTypes = null, 
@@ -136,6 +147,9 @@ namespace BlackDigital
         {
             AddCustomAttributeToType<TAttribute>(typeBuilder, args.Select(a => a.GetType()), args);
         }
+
+
+
 
         public static void AddCustomAttributeToMethod(this MethodBuilder methodBuilder,
                                                       Type attributeType,
@@ -170,6 +184,7 @@ namespace BlackDigital
         }
 
 
+
         public static void AddCustomAttributeToParameter(this ParameterBuilder parameterBuilder,
                                                       Type attributeType,
                                                       IEnumerable<Type>? argsTypes = null,
@@ -200,5 +215,7 @@ namespace BlackDigital
 
             AddCustomAttributeToParameter(parameterBuilder, attribute, argsValues.Select(a => a.GetType()), argsValues);
         }
+
+        #endregion "Create Attributes"
     }
 }
