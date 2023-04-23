@@ -48,7 +48,20 @@ namespace BlackDigital.DataBuilder
 
         public string Prompt => DisplayAttribute?.GetPrompt() ?? string.Empty;
 
-        public string ComponentType => DataTypeAttribute?.GetDataTypeName() ?? GetDataTypeFromPropertyType(Property.PropertyType);
+        public string ComponentType => DataTypeAttribute?.GetDataTypeName() 
+                        ?? Enum.GetName(GetDataTypeFromPropertyType(Property.PropertyType)) 
+                        ?? "";
+
+        public DataType? CurrentDataType
+        {
+            get
+            {
+                if (Enum.TryParse(ComponentType, out DataType dataType))
+                    return dataType;
+
+                return null;
+            }
+        }
 
         public int? MinLength => MinLengthAttribute?.Length;
 
@@ -68,24 +81,21 @@ namespace BlackDigital.DataBuilder
 
         public void SetValue(object? model, object? value) => Property.SetValue(model, value);
 
-        private static string GetDataTypeFromPropertyType(Type type)
+        private static DataType GetDataTypeFromPropertyType(Type type)
         {
-            Type? useType = Nullable.GetUnderlyingType(type);
-
-            if (useType == null)
-                useType = type;
+            Type? useType = Nullable.GetUnderlyingType(type) ?? type;
 
             if (useType != typeof(string)
                 && typeof(IEnumerable).IsAssignableFrom(useType))
-                return "List";
+                return DataType.List;
 
             if (useType.IsEnum)
-                return "Enumeration";
+                return DataType.Enumeration;
 
-            if (DataTypeTable.DataType.Any(dt => dt.Value.Contains(useType)))
-                return DataTypeTable.DataType.First(dt => dt.Value.Contains(useType)).Key;
+            if (DataTypeTable.DataTypes.Any(dt => dt.Value.Contains(useType)))
+                return DataTypeTable.DataTypes.First(dt => dt.Value.Contains(useType)).Key;
 
-            return "Text";
+            return DataType.Text;
         }
     }
 }

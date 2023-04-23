@@ -1,8 +1,6 @@
 ﻿using BlackDigital.Converters;
 using System.Text.Json;
 using System.Text;
-using Newtonsoft.Json;
-using System.Reflection.PortableExecutable;
 using System.Buffers;
 
 namespace BlackDigital.Test.Converters
