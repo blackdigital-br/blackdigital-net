@@ -27,42 +27,49 @@
             _value = value;
         }
 
-        public Id(Guid guid)
+        public Id(Guid? guid)
         {
-            _value = Convert.ToBase64String(guid.ToByteArray())
-                                                .Replace("=", "")
-                                                .Replace("+", "_")
-                                                .Replace("/", "-");
+            if (guid.HasValue)
+            {
+                _value = Convert.ToBase64String(guid.Value.ToByteArray())
+                                                    .Replace("=", "")
+                                                    .Replace("+", "_")
+                                                    .Replace("/", "-");
+            }
+            else
+            {
+                _value = null;
+            }
         }
 
-        public Id(short value)
+        public Id(short? value)
         {
-            _value = value.ToString();
+            _value = value?.ToString();
         }
 
-        public Id(ushort value)
+        public Id(ushort? value)
         {
-            _value = value.ToString();
+            _value = value?.ToString();
         }
 
-        public Id(int value)
+        public Id(int? value)
         {
-            _value = value.ToString();
+            _value = value?.ToString();
         }
 
-        public Id(uint value)
+        public Id(uint? value)
         {
-            _value = value.ToString();
+            _value = value?.ToString();
         }
 
-        public Id(long value)
+        public Id(long? value)
         {
-            _value = value.ToString();
+            _value = value?.ToString();
         }
 
-        public Id(ulong value)
+        public Id(ulong? value)
         {
-            _value = value.ToString();
+            _value = value?.ToString();
         }
 
         #endregion "Construction"
@@ -224,12 +231,36 @@
             return new Guid(Convert.FromBase64String(completeGuid));
         }
 
+        public Guid? TryToGuid()
+        {
+            try
+            {
+                return ToGuid();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public short ToShort()
         {
             if (string.IsNullOrWhiteSpace(_value))
                 return 0;
 
             return short.Parse(_value);
+        }
+
+        public short? TryToShort()
+        {
+            try
+            {
+                return ToShort();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public ushort ToUShort()
@@ -240,12 +271,36 @@
             return ushort.Parse(_value);
         }
 
+        public ushort? TryToUShort()
+        {
+            try
+            {
+                return ToUShort();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public int ToInt()
         {
             if (string.IsNullOrWhiteSpace(_value))
                 return 0;
 
             return int.Parse(_value);
+        }
+
+        public int? TryToInt()
+        {
+            try
+            {
+                return ToInt();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public uint ToUInt()
@@ -256,6 +311,18 @@
             return uint.Parse(_value);
         }
 
+        public uint? TryToUInt()
+        {
+            try
+            {
+                return ToUInt();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public long ToLong()
         {
             if (string.IsNullOrWhiteSpace(_value))
@@ -264,12 +331,36 @@
             return long.Parse(_value);
         }
 
+        public long? TryToLong()
+        {
+            try
+            {
+                return ToLong();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public ulong ToULong()
         {
             if (string.IsNullOrWhiteSpace(_value))
                 return 0;
 
             return ulong.Parse(_value);
+        }
+
+        public ulong? TryToULong()
+        {
+            try
+            {
+                return ToULong();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         #endregion "To..."
