@@ -1,4 +1,6 @@
 ﻿
+using BlackDigital.Model;
+
 namespace BlackDigital.Authentication
 {
     public abstract class SecurityFilter

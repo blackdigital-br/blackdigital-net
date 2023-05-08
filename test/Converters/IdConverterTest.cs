@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text;
 using System.Buffers;
+using BlackDigital.Model;
 
 namespace BlackDigital.Test.Converters
 {

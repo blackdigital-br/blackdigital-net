@@ -1,5 +1,4 @@
-﻿
-namespace BlackDigital
+﻿namespace BlackDigital.Model
 {
     public interface IActive
     {

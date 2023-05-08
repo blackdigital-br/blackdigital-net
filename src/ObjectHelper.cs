@@ -69,5 +69,13 @@ namespace BlackDigital
 
             return item.ToJson().To<T>();
         }
+
+        public static TCast? CastObject<TCast, TOrig>(this TOrig item)
+        {
+            if (item == null)
+                return default;
+            
+            return item.ToJson().To<TCast>();
+        }
     }
 }

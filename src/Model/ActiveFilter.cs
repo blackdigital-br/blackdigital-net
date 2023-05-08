@@ -1,15 +1,14 @@
-﻿
-namespace BlackDigital
+﻿namespace BlackDigital.Model
 {
     public static class ActiveFilter
     {
         public static IQueryable<TActive> IsActive<TActive>(this IQueryable<TActive> query)
             where TActive : IActive
-            => FilterActive(query, true);
+            => query.FilterActive(true);
 
         public static IQueryable<TActive> NotIsActive<TActive>(this IQueryable<TActive> query)
             where TActive : IActive
-            => FilterActive(query, false);
+            => query.FilterActive(false);
 
         public static IQueryable<TActive> FilterActive<TActive>(this IQueryable<TActive> query, bool? active)
             where TActive : IActive

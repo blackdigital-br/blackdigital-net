@@ -1,4 +1,4 @@
-﻿namespace BlackDigital
+﻿namespace BlackDigital.Model
 {
     public readonly struct Id : IComparable<Id>,
                                 IComparable<string>,
