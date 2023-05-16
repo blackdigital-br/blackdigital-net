@@ -33,6 +33,13 @@ namespace BlackDigital
             return defaultValue;
         }
 
+        public static DateTime ToDateTimeUnspecified(this DateTime date)
+        {
+            return new DateTime(date.Year, date.Month, date.Day,
+                                date.Hour, date.Minute, date.Second,
+                                date.Millisecond, DateTimeKind.Unspecified);
+        }
+
         public static void Deconstruct(this TimeSpan timespan, out int hours, out int minutes, out int seconds) =>
             (hours, minutes, seconds) = (timespan.Hours, timespan.Minutes, timespan.Seconds);
 
