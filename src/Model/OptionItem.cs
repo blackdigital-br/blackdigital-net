@@ -11,6 +11,6 @@ namespace BlackDigital.Model
 
         public string? Description { get; set; }
 
-        public Dictionary<string, Id> Parents { get; set; }
+        public Dictionary<string, EnumerableId> Connections { get; set; }
     }
 }
