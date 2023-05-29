@@ -33,10 +33,10 @@ namespace BlackDigital.Model
             return Items.Any(option => option.Id == key);
         }
 
-        public Options FilterParents(string name, Id id)
+        public Options FilterConnections(string name, Id id)
         {
-            return new Options(Items.Where(option => option.Parents.ContainsKey(name)
-                                && option.Parents[name] == id));
+            return new Options(Items.Where(option => option.Connections.ContainsKey(name)
+                                && option.Connections[name].Contains(id)));
         }
 
         public Options FilterLabel(string label)
@@ -53,10 +53,10 @@ namespace BlackDigital.Model
                         ));
         }
 
-        public Options FilterParentsId(Id id)
+        public Options FilterConnectionsId(Id id)
         {
             return new Options(
-                Items.Where(option => option.Parents.Any(parent => parent.Value == id))
+                Items.Where(option => option.Connections.Any(parent => parent.Value.Contains(id)))
             );
         }
 

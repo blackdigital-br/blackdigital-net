@@ -13,94 +13,94 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 1,
                     Label = "A",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 1 }
+                        { "Parent", new Id[] { 1 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 2,
                     Label = "B",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 2 }
+                        { "Parent", new Id[] {2 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 3,
                     Label = "C",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 1 }
+                        { "Parent", new Id[] {1 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 4,
                     Label = "D",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 2 }
+                        { "Parent", new Id[] {2 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 5,
                     Label = "E",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 1 }
+                        { "Parent", new Id[] { 1 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 6,
                     Label = "F",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 2 }
+                        { "Parent", new Id[] { 2 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 7,
                     Label = "G",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 1 }
+                        { "Parent", new Id[] { 1 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 8,
                     Label = "H",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 2 }
+                        { "Parent", new Id[] { 2 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 9,
                     Label = "I",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 1 }
+                        { "Parent", new Id[] {1 } }
                     }
                 },
                 new OptionItem
                 {
                     Id = 10,
                     Label = "J",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 2 }
+                        { "Parent", new Id[] {2 } }
                     }
                 },
             });
-            var filtered = options.FilterParents("Parent", 1);
+            var filtered = options.FilterConnections("Parent", 1);
             Assert.Equal(5, filtered.Count());
         }
 
@@ -115,9 +115,9 @@ namespace BlackDigital.Test.Model
                     Label = "A",
                     Description = "B",
                     Code = "C",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 1 }
+                        { "Parent", new Id[] {1 } }
                     }
                 },
                 new OptionItem()
@@ -126,9 +126,9 @@ namespace BlackDigital.Test.Model
                     Label = "B",
                     Description = "C",
                     Code = "D",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 2 }
+                        { "Parent", new Id[] {2 } }
                     }
                 },
                 new OptionItem()
@@ -137,9 +137,9 @@ namespace BlackDigital.Test.Model
                     Label = "C",
                     Description = "D",
                     Code = "E",
-                    Parents = new Dictionary<string, Id>
+                    Connections = new Dictionary<string, EnumerableId>
                     {
-                        { "Parent", 1 }
+                        { "Parent", new Id[] { 1 } }
                     }
                 },
             });
