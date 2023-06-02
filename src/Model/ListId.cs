@@ -8,6 +8,11 @@ namespace BlackDigital.Model
     {
         #region "Constructors"
 
+        public ListId()
+            : base(new List<Id>())
+        {
+        }
+
         public ListId(IEnumerable<Id> ids)
             : base(ids.ToList())
         {

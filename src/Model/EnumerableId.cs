@@ -7,6 +7,11 @@ namespace BlackDigital.Model
     {
         #region "Constructors"
 
+        public EnumerableId()
+        {
+            Ids = new List<Id>();
+        }
+
         public EnumerableId(IEnumerable<Id> ids)
         {
             Ids = ids;
