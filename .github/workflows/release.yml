@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Create Version
-      run: echo "lib_version=$(date +'%y.%m.%d')" >> $GITHUB_ENV
+      run: echo "lib_version=$(date +'%y.%m.%d.%H')" >> $GITHUB_ENV
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:

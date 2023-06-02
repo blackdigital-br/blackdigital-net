@@ -13,7 +13,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 1,
                     Label = "A",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] { 1 } }
                     }
@@ -22,7 +22,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 2,
                     Label = "B",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] {2 } }
                     }
@@ -31,7 +31,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 3,
                     Label = "C",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] {1 } }
                     }
@@ -40,7 +40,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 4,
                     Label = "D",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] {2 } }
                     }
@@ -49,7 +49,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 5,
                     Label = "E",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] { 1 } }
                     }
@@ -58,7 +58,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 6,
                     Label = "F",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] { 2 } }
                     }
@@ -67,7 +67,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 7,
                     Label = "G",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] { 1 } }
                     }
@@ -76,7 +76,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 8,
                     Label = "H",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] { 2 } }
                     }
@@ -85,7 +85,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 9,
                     Label = "I",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] {1 } }
                     }
@@ -94,7 +94,7 @@ namespace BlackDigital.Test.Model
                 {
                     Id = 10,
                     Label = "J",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] {2 } }
                     }
@@ -115,7 +115,7 @@ namespace BlackDigital.Test.Model
                     Label = "A",
                     Description = "B",
                     Code = "C",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] {1 } }
                     }
@@ -126,7 +126,7 @@ namespace BlackDigital.Test.Model
                     Label = "B",
                     Description = "C",
                     Code = "D",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] {2 } }
                     }
@@ -137,7 +137,7 @@ namespace BlackDigital.Test.Model
                     Label = "C",
                     Description = "D",
                     Code = "E",
-                    Connections = new Dictionary<string, EnumerableId>
+                    Connections = new Dictionary<string, ListId>
                     {
                         { "Parent", new Id[] { 1 } }
                     }

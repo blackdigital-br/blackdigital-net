@@ -11,7 +11,8 @@ namespace BlackDigital
             Converters = new()
             {
                 new JsonStringEnumConverter(),
-                new TimeSpanConverter()
+                new TimeSpanConverter(),
+                new IdConverter(),
             };
         }
 
