@@ -374,6 +374,16 @@ namespace BlackDigital.Rest
             return this;
         }
 
+        public RestClient RemoveHeader(string key)
+        {
+            if (CustomHeaders.ContainsKey(key))
+                CustomHeaders.Remove(key);
+
+            UpdateHeaders();
+
+            return this;
+        }
+
         public RestClient AddAuthentication(AuthenticationHeaderValue customAuthentication)
         {
             if (CustomHeaders.ContainsKey(Authorization))
