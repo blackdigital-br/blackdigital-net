@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json;
+using BlackDigital.Model;
 
 namespace BlackDigital.Converters
 {

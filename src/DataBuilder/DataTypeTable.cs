@@ -47,15 +47,21 @@ namespace BlackDigital.DataBuilder
             typeof(TimeOnly)
         };
 
-        public static readonly Dictionary<string, Type[]> DataType = new()
+        public static readonly Type[] TimeSpanTypes = new Type[]
         {
-            { "Boolean", BooleansTypes },
-            { "Integer", IntegersType },
-            { "UnsignedInteger", UnsignedIntegersType },
-            { "Decimal", DecimalsType },
-            { "DateTime", DateTimeTypes },
-            { "Date", DateTypes },
-            { "Time", TimeTypes },
+            typeof(TimeSpan)
+        };
+
+        public static readonly Dictionary<DataType, Type[]> DataTypes = new()
+        {
+            { DataType.Boolean, BooleansTypes },
+            { DataType.Integer, IntegersType },
+            { DataType.UnsignedInteger, UnsignedIntegersType },
+            { DataType.Decimal, DecimalsType },
+            { DataType.DateTime, DateTimeTypes },
+            { DataType.Date, DateTypes },
+            { DataType.Time, TimeTypes },
+            { DataType.TimeSpan, TimeSpanTypes }
         };
     }
 }

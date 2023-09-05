@@ -61,14 +61,14 @@ namespace BlackDigital.Test
         [Fact]
         public void GetAttributeFromParameter()
         {
-            var attributes = typeof(IServiceTest).GetMethod("MyAction").GetParameters().First().GetAttributes<FromRouteAttribute>();
+            var attributes = typeof(IServiceTest).GetMethod("MyAction").GetParameters().First().GetAttributes<RouteAttribute>();
 
             Assert.Single(attributes);
-            Assert.Equal(typeof(FromRouteAttribute), attributes.First().GetType());
+            Assert.Equal(typeof(RouteAttribute), attributes.First().GetType());
 
-            var attribute = typeof(IServiceTest).GetMethod("MyAction").GetParameters().First().GetSingleAttribute<FromRouteAttribute>();
+            var attribute = typeof(IServiceTest).GetMethod("MyAction").GetParameters().First().GetSingleAttribute<RouteAttribute>();
             Assert.NotNull(attribute);
-            Assert.Equal(typeof(FromRouteAttribute), attribute.GetType());
+            Assert.Equal(typeof(RouteAttribute), attribute.GetType());
         }
     }
 }

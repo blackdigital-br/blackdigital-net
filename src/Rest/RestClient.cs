@@ -18,6 +18,8 @@ namespace BlackDigital.Rest
         {
             CustomHeaders = new();
             HttpHandler = hanlder;
+            RequestsRetryConnections = new();
+            TimeRetryConnection = 3000;
 
             if (hanlder != null)
                 Client = new(hanlder);
@@ -31,13 +33,24 @@ namespace BlackDigital.Rest
 
         #region "Properties"
 
+        public bool RetryConection { get; set; }
+
+        public int TimeRetryConnection { get; set; }
+
+        public int RetryCount => RequestsRetryConnections.Count;
+
         public event Action? Unauthorized;
         public event Action? ConnectionError;
         public event Action? ServerError;
 
-        private HttpClient Client;
+        public HttpClient Client { get; private set; }
         protected internal HttpMessageHandler? HttpHandler;
         protected Dictionary<string, List<string>> CustomHeaders;
+        protected List<HttpRequestMessage> RequestsRetryConnections;
+
+        private bool _threadRun;
+        private object _lockThread = new();
+        private Thread? _threadRetryConnection;
 
         #endregion "Properties"
 
@@ -56,7 +69,6 @@ namespace BlackDigital.Rest
         #endregion "Client Methods"
 
         #region "Rest Methods"
-
 
         internal protected virtual async Task<object?> RequestAsync(HttpMethod method,
                                                                     string url,
@@ -97,19 +109,25 @@ namespace BlackDigital.Rest
                                                           Dictionary<string, string>? headers = null, 
                                                           bool thrownError = true)
         {
-            using var request = new HttpRequestMessage(method, url);
+            var request = new HttpRequestMessage(method, url);
+
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            }
+
+            if (content != null)
+                request.Content = content;
+
+           return await RequestAsync(request, thrownError);
+        }
+
+        protected virtual async Task<HttpResponseMessage> RequestAsync(HttpRequestMessage requestMessage, bool thrownError = false)
+        {
             try
             {
-                if (headers != null)
-                {
-                    foreach (var header in headers)
-                        request.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                }
-
-                if (content != null)
-                    request.Content = content;
-
-                var httpResponse = await Client.SendAsync(request);
+                var httpResponse = await Client.SendAsync(requestMessage);
 
                 if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -121,31 +139,27 @@ namespace BlackDigital.Rest
                     BusinessException.Throw(responseAsString, (int)httpResponse.StatusCode);
                 }
                 else if (thrownError && httpResponse.StatusCode.IsServerError())
-                    throw new Exception("Connection error");
+                    throw new Exception("Connection error", new(await httpResponse.Content.ReadAsStringAsync()));
+
+                EndRequest(requestMessage);
 
                 return httpResponse;
             }
             catch (HttpRequestException requestError)
             {
-                Console.WriteLine(requestError);
-
-                ConnectionError?.Invoke();
-
-                if (thrownError)
-                    throw;
-
+                ErrorConnection(requestMessage, requestError, thrownError);
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                EndRequest(requestMessage);
 
                 if (thrownError)
                     throw;
 
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
-
         }
 
         public async Task<T?> GetRestAsync<T>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
@@ -268,6 +282,84 @@ namespace BlackDigital.Rest
 
         #endregion "Rest Methods"
 
+        #region "Internal Methods"
+
+        protected void ErrorConnection(HttpRequestMessage request, HttpRequestException requestError, bool thrownError)
+        {
+            Console.WriteLine(requestError);
+
+            if (RetryConection && !RequestsRetryConnections.Contains(request))
+            {
+                RequestsRetryConnections.Add(request);
+                StartRetryProcess();
+            }
+
+            ConnectionError?.Invoke();
+
+            if (thrownError)
+                throw requestError;
+        }
+
+        protected void EndRequest(HttpRequestMessage request)
+        {
+            request?.Dispose();
+            RequestsRetryConnections.Remove(request);
+        }
+
+        private void StartRetryProcess()
+        {
+            lock (_lockThread) 
+            {
+                if (_threadRun)
+                {
+                    _threadRun = true;
+                    _threadRetryConnection = new Thread(RetryConnectionProcess);
+                    _threadRetryConnection.Start();
+                }
+            }
+        }
+
+        private void RetryConnectionProcess()
+        {
+            while (_threadRun && RequestsRetryConnections.Any())
+            {
+                Thread.Sleep(TimeRetryConnection);
+                var allRequests = RequestsRetryConnections.ToArray();
+
+                foreach ( var request in allRequests)
+                {
+                    try
+                    {
+                        RequestAsync(request, true).Wait();
+                    }
+                    catch (HttpRequestException requestError)
+                    {
+                        break;
+                    }
+                    catch { }
+                }
+            }
+
+            lock (_lockThread)
+            {
+                _threadRun = false;
+                _threadRetryConnection = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            Client?.Dispose();
+            Client = null;
+            _threadRun = false;
+            _threadRetryConnection = null;
+
+            RequestsRetryConnections.ForEach(r => r.Dispose());
+            RequestsRetryConnections.Clear();
+        }
+
+        #endregion "Internal Methods"
+
         #region "Builder"
 
         public RestClient AddHeader(string key, string value)
@@ -279,6 +371,28 @@ namespace BlackDigital.Rest
 
             UpdateHeaders();
             
+            return this;
+        }
+
+        public RestClient AddSingleHeader(string key, string value)
+        {
+            if (CustomHeaders.ContainsKey(key))
+                CustomHeaders.Remove(key);
+            
+            CustomHeaders.Add(key, new List<string>() { value });
+
+            UpdateHeaders();
+
+            return this;
+        }
+
+        public RestClient RemoveHeader(string key)
+        {
+            if (CustomHeaders.ContainsKey(key))
+                CustomHeaders.Remove(key);
+
+            UpdateHeaders();
+
             return this;
         }
 
@@ -314,12 +428,6 @@ namespace BlackDigital.Rest
 
                 Client.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
             }
-        }
-
-        public void Dispose()
-        {
-            Client?.Dispose();
-            Client = null;
         }
 
         #endregion "Builder"

@@ -1,4 +1,6 @@
 ﻿
+using BlackDigital.Model;
+
 namespace BlackDigital.Test
 {
     public class IdTest

@@ -7,9 +7,9 @@ namespace BlackDigital.Test.Mock
     public interface IServiceTest
     {
         [Action("{name}")]
-        Task<ComplexModel> MyAction([FromRoute] string name,
-                                    [FromHeader] Guid myGuid,
-                                    [FromBody] SimpleModel model,
-                                    [FromQuery] SimpleModel query);
+        Task<ComplexModel> MyAction([Route] string name,
+                                    [Header] Guid myGuid,
+                                    [Body] SimpleModel model,
+                                    [Query] SimpleModel query);
     }
 }
