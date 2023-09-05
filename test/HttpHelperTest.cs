@@ -66,7 +66,7 @@ namespace BlackDigital.Test
                 }
             };
             
-            string queryString = $"?{origin.ToQueryString()}";
+            string queryString = $"?{origin.ToUrlQueryString()}";
 
             var complexClass = queryString.FromQueryString<ComplexClass>();
 

@@ -1,17 +1,29 @@
-﻿
-using BlackDigital.Rest;
+﻿using BlackDigital.Rest;
 using BlackDigital.Test.Mock;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace BlackDigital.Test.Rest
 {
-    public class RestServiceTest
+    public class RestServiceBuilderTest
     {
         [Fact]
-        public async void ExecuteServiceRest()
+        public async void ExecuteServiceFromBuilderRest()
         {
+            var builder = new RestServiceBuilder();
+
+            builder.AddService<IServiceTest>();
+
+            var services = builder.Build();
+            var type = services.FirstOrDefault().Value;
+
             var restClient = new RestClientMock();
-            var restService = new RestService<IServiceTest>(restClient);
 
             var response = new ComplexModel()
             {
@@ -36,24 +48,22 @@ namespace BlackDigital.Test.Rest
                 StatusCode = HttpStatusCode.OK
             });
 
-            var p1 = "Nome";
-            var p2 = Guid.NewGuid();
-            var p3 = new SimpleModel()
+            var myService = (IServiceTest)Activator.CreateInstance(type, restClient);
+
+            var result = await myService.MyAction("Nome", Guid.NewGuid(), new SimpleModel()
             {
                 Description = "Descrição",
                 HttpStatus = System.Net.HttpStatusCode.OK,
                 Name = "Nome",
                 Value = 21
-            };
-            var p4 = new SimpleModel()
+            },
+            new()
             {
                 Description = null,
                 HttpStatus = System.Net.HttpStatusCode.OK,
                 Name = null,
                 Value = 21
-            };
-
-            var result = await restService.CallActionAsync(s => s.MyAction(p1, p2, p3, p4));
+            });
 
             Assert.NotNull(result);
             Assert.NotNull(restClient.LastRequest.Headers.GetValues("myGuid").FirstOrDefault());
@@ -65,6 +75,7 @@ namespace BlackDigital.Test.Rest
             Assert.Equal(45, result.Number);
             Assert.Equal(1, result.List.Count);
             Assert.Equal("MyDescription", result.List.First().Description);
+
         }
     }
 }

@@ -13,33 +13,33 @@ namespace BlackDigital.Test
         [Fact(DisplayName = "Null To QueryString")]
         public void NullToQueryString()
         {
-            var queryString = ObjectHelper.ToQueryString<string>(null);
+            var queryString = ObjectHelper.ToUrlQueryString<string>(null);
             Assert.Equal(queryString, string.Empty);
 
-            queryString = ObjectHelper.ToQueryString<string>(null, "test");
+            queryString = ObjectHelper.ToUrlQueryString<string>(null, "test");
             Assert.Equal(queryString, string.Empty);
         }
 
         [Fact(DisplayName = "String and Value To QueryString")]
         public void StringAndValueToQueryString()
         {
-            var queryString = "MyValue".ToQueryString();
+            var queryString = "MyValue".ToUrlQueryString();
 
             Assert.Equal("MyValue", queryString);
 
-            queryString = "MyValue".ToQueryString("test");
+            queryString = "MyValue".ToUrlQueryString("test");
             Assert.Equal("test=MyValue", queryString);
 
-            queryString = 15.ToQueryString();
+            queryString = 15.ToUrlQueryString();
             Assert.Equal("15", queryString);
 
-            queryString = 15.ToQueryString("test");
+            queryString = 15.ToUrlQueryString("test");
             Assert.Equal("test=15", queryString);
 
-            queryString = (new DateTime(2022, 8, 11, 10, 45, 26, 70, DateTimeKind.Utc)).ToQueryString();
+            queryString = (new DateTime(2022, 8, 11, 10, 45, 26, 70, DateTimeKind.Utc)).ToUrlQueryString();
             Assert.Equal("2022-08-11T10:45:26.0700000Z", queryString);
 
-            queryString = (new DateTime(2022, 8, 11, 10, 45, 26, 70, DateTimeKind.Utc)).ToQueryString("test");
+            queryString = (new DateTime(2022, 8, 11, 10, 45, 26, 70, DateTimeKind.Utc)).ToUrlQueryString("test");
             Assert.Equal("test=2022-08-11T10:45:26.0700000Z", queryString);
         }
 
@@ -53,10 +53,10 @@ namespace BlackDigital.Test
                 new int[] { 1, 2 },
             };
 
-            var queryString = list.ToQueryString();
+            var queryString = list.ToUrlQueryString();
             Assert.Equal("15&MyValue&1&2", queryString);
 
-            queryString = list.ToQueryString("test");
+            queryString = list.ToUrlQueryString("test");
             Assert.Equal("test[0]=15&test[1]=MyValue&test[2][0]=1&test[2][1]=2", queryString);
         }
 
@@ -88,7 +88,7 @@ namespace BlackDigital.Test
                 }
             };
 
-            var queryString = myObject.ToQueryString();
+            var queryString = myObject.ToUrlQueryString();
             Assert.Equal("Id=12&Name=My+Name&Status=True&List[0].Value=1&List[0].Name=Item+1&List[0].HttpStatus=Accepted&List[1].Value=2&List[1].Name=Item+2&List[1].Description=Description+2&List[1].HttpStatus=Accepted", queryString);
         }
     }
