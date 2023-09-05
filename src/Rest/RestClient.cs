@@ -374,6 +374,18 @@ namespace BlackDigital.Rest
             return this;
         }
 
+        public RestClient AddSingleHeader(string key, string value)
+        {
+            if (CustomHeaders.ContainsKey(key))
+                CustomHeaders.Remove(key);
+            
+            CustomHeaders.Add(key, new List<string>() { value });
+
+            UpdateHeaders();
+
+            return this;
+        }
+
         public RestClient RemoveHeader(string key)
         {
             if (CustomHeaders.ContainsKey(key))
