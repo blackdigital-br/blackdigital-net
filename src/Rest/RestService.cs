@@ -1,56 +1,62 @@
 ﻿using System.Reflection;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace BlackDigital.Rest
 {
-    public abstract class BaseService<BaseType>
+    public class RestService<TService>
     {
-        #region "Constructors"
-
-        public BaseService(RestClient client)
+        public RestService(RestClient client)
         {
             Client = client;
-            ServiceAttributes = typeof(BaseType).GetCustomAttributes(true)
-                                                .Cast<Attribute>()
-                                                .ToList();
         }
-
-        #endregion "Constructors"
-
-        #region "Properties"
 
         protected readonly RestClient Client;
 
-        private List<Attribute> ServiceAttributes;
-
-        #endregion "Properties"
-
-        #region "Methods"
-
-        protected async Task<T> ExecuteRequest<T>(string name, Dictionary<string, object> arguments)
+        public async Task<TReturn?> CallAsync<TReturn>(Expression<Func<TService, Task<TReturn>>> expression)
         {
-            if (Client == null)
-                throw new ArgumentNullException("RestClient");
+            var result = await ExecuteRequestAsync(expression);
 
-            var methodInfo = typeof(BaseType).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                             .Where(x => x.Name == name && x.GetParameters().Length == arguments.Count)
-                                             .SingleOrDefault();
+            return result is TReturn ? (TReturn)result : default;
+        }
 
-            if (methodInfo == null)
-                throw new MethodAccessException($"{name}: {arguments.Count}");
+        public async Task CallAsync(Expression<Action<TService>> expression)
+        {
+            await ExecuteRequestAsync(expression);
+        }
 
+        private async Task<object?> ExecuteRequestAsync(LambdaExpression expression)
+        {
+            if (expression.Body is not MethodCallExpression)
+                throw new ArgumentException("Invalid method expression", nameof(expression));
 
-            var service = ServiceAttributes.Where(x => x is ServiceAttribute)
-                                           .Cast<ServiceAttribute>()
-                                           .FirstOrDefault();
+            var methodCall = (MethodCallExpression)expression.Body;
+            var methodInfo = methodCall.Method;
 
-            if (service == null)
-                throw new CustomAttributeFormatException("ServiceAttribute");
+            if (methodInfo.DeclaringType != typeof(TService))
+                throw new ArgumentException("Invalid declaring type method expression", nameof(expression));
 
-            var action = methodInfo.GetCustomAttribute<ActionAttribute>();
+            var service = methodInfo.DeclaringType.GetCustomAttribute<ServiceAttribute>()
+                ?? throw new CustomAttributeFormatException("ServiceAttribute");
 
-            if (action == null)
-                throw new CustomAttributeFormatException("ActionAttribute");
+            var action = methodInfo.GetCustomAttribute<ActionAttribute>()
+                ?? throw new CustomAttributeFormatException("ActionAttribute");
+
+            Dictionary<string, object> arguments = new();
+
+            for (int i = 0; i < methodCall.Arguments.Count; i++)
+            {
+                var parameter = methodInfo.GetParameters()[i];
+
+                var argument = methodCall.Arguments[i];
+
+                if (argument.CanReduce)
+                    argument = argument.Reduce();
+
+                var value = Expression.Lambda(argument).Compile().DynamicInvoke();
+
+                arguments.Add(parameter.Name, value);
+            }
 
             var url = GenerateRoute(methodInfo, service, action, arguments);
             var headers = GenerateHeaders(methodInfo, service, action, arguments);
@@ -58,15 +64,12 @@ namespace BlackDigital.Rest
             var method = GetHttpMethod(action);
             var returnType = GetResponseType(methodInfo, action);
 
-            var response = await Client.RequestAsync(method, url, returnType, body, headers, false);
-
-            if (methodInfo.ReturnType != null)
-                return (T)response;
-
-            return default;
+            return await Client.RequestAsync(method, url, returnType, body, headers, false);
         }
 
-        private string GenerateRoute(MethodInfo methodInfo,
+        #region "Create Call"
+
+        private static string GenerateRoute(MethodInfo methodInfo,
                                      ServiceAttribute serviceAttribute,
                                      ActionAttribute actionAttribute,
                                      Dictionary<string, object> arguments)
@@ -75,20 +78,20 @@ namespace BlackDigital.Rest
 
             var urls = new List<string?>()
             {
-                GetRouteUrl(serviceAttribute?.BaseRoute, parameters),
-                GetRouteUrl(actionAttribute?.Route, parameters)
+                RestService<TService>.GetRouteUrl(serviceAttribute?.BaseRoute, parameters),
+                RestService<TService>.GetRouteUrl(actionAttribute?.Route, parameters)
             };
 
             urls.Remove(null);
 
-            return InsertQueryString(string.Join("/", urls),
+            return RestService<TService>.InsertQueryString(string.Join("/", urls),
                                      methodInfo,
                                      serviceAttribute,
                                      actionAttribute,
                                      arguments);
         }
 
-        private Dictionary<string, string> GenerateHeaders(MethodInfo methodInfo,
+        private static Dictionary<string, string> GenerateHeaders(MethodInfo methodInfo,
                                      ServiceAttribute serviceAttribute,
                                      ActionAttribute actionAttribute,
                                      Dictionary<string, object> arguments)
@@ -102,7 +105,7 @@ namespace BlackDigital.Rest
             return headers;
         }
 
-        private object? GenerateBody(MethodInfo methodInfo,
+        private static object? GenerateBody(MethodInfo methodInfo,
                                      ServiceAttribute serviceAttribute,
                                      ActionAttribute actionAttribute,
                                      Dictionary<string, object> arguments)
@@ -116,7 +119,7 @@ namespace BlackDigital.Rest
             return parameter.Value;
         }
 
-        private string? GetRouteUrl(string? route, List<RestParameter<RouteAttribute>> arguments)
+        private static string? GetRouteUrl(string? route, List<RestParameter<RouteAttribute>> arguments)
         {
             if (route == null)
                 return null;
@@ -139,7 +142,7 @@ namespace BlackDigital.Rest
                 });
         }
 
-        private string InsertQueryString(string url,
+        private static string InsertQueryString(string url,
                                          MethodInfo methodInfo,
                                          ServiceAttribute serviceAttribute,
                                          ActionAttribute actionAttribute,
@@ -155,7 +158,7 @@ namespace BlackDigital.Rest
             foreach (var parameter in parameters)
             {
                 if (parameter.Attribute?.Type == QueryParameterType.Raw)
-                    queries.Add(parameter.Value?.ToQueryString() ?? string.Empty);
+                    queries.Add(parameter.Value?.ToUrlQueryString() ?? string.Empty);
                 else
                     queries.Add($"{parameter.Attribute?.Name ?? parameter.Name}={parameter.Value?.ToString() ?? string.Empty}");
             }
@@ -163,29 +166,30 @@ namespace BlackDigital.Rest
             return $"{url}?{string.Join("&", queries)}";
         }
 
-        private HttpMethod GetHttpMethod(ActionAttribute actionAttribute)
+        private static HttpMethod GetHttpMethod(ActionAttribute actionAttribute)
         {
             return actionAttribute.Method switch
             {
                 RestMethod.Post => HttpMethod.Post,
                 RestMethod.Put => HttpMethod.Put,
                 RestMethod.Delete => HttpMethod.Delete,
+                RestMethod.Patch => HttpMethod.Patch,
                 _ => HttpMethod.Get,
             };
         }
 
-        private Type? GetResponseType(MethodInfo methodInfo, ActionAttribute actionAttribute)
+        private static Type? GetResponseType(MethodInfo methodInfo, ActionAttribute actionAttribute)
         {
             if (actionAttribute.ReturnIsSuccess || methodInfo.ReturnType == null)
                 return null;
 
-            if (methodInfo.ReturnType.IsGenericType 
+            if (methodInfo.ReturnType.IsGenericType
                 && methodInfo.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
                 return methodInfo.ReturnType.GetGenericArguments()[0];
 
             return methodInfo.ReturnType;
         }
 
-        #endregion "Methods"
+        #endregion "Create Call"
     }
 }

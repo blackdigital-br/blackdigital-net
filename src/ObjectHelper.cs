@@ -11,7 +11,7 @@ namespace BlackDigital
     {
         public static string CreateId() => Guid.NewGuid().ToString().Replace("-", "");
 
-        public static string ToQueryString<T>(this T item, string fieldPrefix = "")
+        public static string ToUrlQueryString<T>(this T item, string fieldPrefix = "")
         {
             string prefix = string.IsNullOrEmpty(fieldPrefix) ? "" : $"{fieldPrefix}=";
 
@@ -36,7 +36,7 @@ namespace BlackDigital
                 foreach (object? valueItem in item as IEnumerable)
                 {
                     prefix = string.IsNullOrEmpty(fieldPrefix) ? "" : $"{fieldPrefix}[{pos++}]";
-                    itens.Add($"{ToQueryString(valueItem, prefix)}");
+                    itens.Add($"{ToUrlQueryString(valueItem, prefix)}");
                 }
 
                 return string.Join("&", itens);
@@ -53,7 +53,7 @@ namespace BlackDigital
                     if (propertyValue != null)
                     {
                         prefix = string.IsNullOrEmpty(fieldPrefix) ? $"{property.Name}" : $"{fieldPrefix}.{property.Name}";
-                        itens.Add(ToQueryString(propertyValue, prefix));
+                        itens.Add(ToUrlQueryString(propertyValue, prefix));
                     }
                 }
             }
