@@ -53,7 +53,7 @@ namespace BlackDigital.Test.Rest
                 Value = 21
             };
 
-            var result = await restService.CallActionAsync(s => s.MyAction(p1, p2, p3, p4));
+            var result = await restService.CallAsync(s => s.MyAction(p1, p2, p3, p4));
 
             Assert.NotNull(result);
             Assert.NotNull(restClient.LastRequest.Headers.GetValues("myGuid").FirstOrDefault());
