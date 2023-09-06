@@ -15,6 +15,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Rest\BaseService.cs.bck" />
+    <None Remove="Rest\RestServiceBuilder.cs.bck" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Rest\BaseService.cs.bck" />
+    <Compile Include="Rest\RestServiceBuilder.cs.bck" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\doc\images\Logo128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

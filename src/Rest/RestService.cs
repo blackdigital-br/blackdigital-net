@@ -13,14 +13,14 @@ namespace BlackDigital.Rest
 
         protected readonly RestClient Client;
 
-        public async Task<TReturn?> CallActionAsync<TReturn>(Expression<Func<TService, Task<TReturn>>> expression)
+        public async Task<TReturn?> CallAsync<TReturn>(Expression<Func<TService, Task<TReturn>>> expression)
         {
             var result = await ExecuteRequestAsync(expression);
 
             return result is TReturn ? (TReturn)result : default;
         }
 
-        public async Task CallActionAsync(Expression<Action<TService>> expression)
+        public async Task CallAsync(Expression<Action<TService>> expression)
         {
             await ExecuteRequestAsync(expression);
         }
@@ -67,6 +67,7 @@ namespace BlackDigital.Rest
             return await Client.RequestAsync(method, url, returnType, body, headers, false);
         }
 
+        #region "Create Call"
 
         private static string GenerateRoute(MethodInfo methodInfo,
                                      ServiceAttribute serviceAttribute,
@@ -172,6 +173,7 @@ namespace BlackDigital.Rest
                 RestMethod.Post => HttpMethod.Post,
                 RestMethod.Put => HttpMethod.Put,
                 RestMethod.Delete => HttpMethod.Delete,
+                RestMethod.Patch => HttpMethod.Patch,
                 _ => HttpMethod.Get,
             };
         }
@@ -187,5 +189,7 @@ namespace BlackDigital.Rest
 
             return methodInfo.ReturnType;
         }
+
+        #endregion "Create Call"
     }
 }
