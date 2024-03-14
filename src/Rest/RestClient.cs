@@ -181,19 +181,26 @@ namespace BlackDigital.Rest
 
         public async Task<TReturn?> PostRestAsync<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
         {
-            string jsonString = JsonCast.ToJson(sender);
-            var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-
-            var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, thrownError);
-
-            if (httpResponse.IsSuccessStatusCode)
+            try
             {
-                var responseAsString = await httpResponse.Content.ReadAsStringAsync();
+                string jsonString = JsonCast.ToJson(sender);
+                var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-                if (typeof(TReturn) == typeof(string))
-                    return (TReturn)(object)responseAsString;
+                var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, thrownError);
 
-                return JsonCast.To<TReturn>(responseAsString);
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    var responseAsString = await httpResponse.Content.ReadAsStringAsync();
+
+                    if (typeof(TReturn) == typeof(string))
+                        return (TReturn)(object)responseAsString;
+
+                    return JsonCast.To<TReturn>(responseAsString);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
 
             return default;

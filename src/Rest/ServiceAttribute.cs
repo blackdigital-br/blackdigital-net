@@ -12,5 +12,22 @@
         public string BaseRoute { get; set; }
 
         public bool Authorize { get; set; }
+
+        public string? IsMatch(string? route)
+        {
+            if (route == null)
+                return null;
+
+            var routePaths = route.Split('/');
+            var baseRoutePaths = BaseRoute.Split('/');
+
+            for (int i = 0; i < baseRoutePaths.Length; i++)
+            {
+                if (baseRoutePaths[i].ToLower() != routePaths[i].ToLower())
+                    return null;
+            }
+
+            return string.Join('/', routePaths.Skip(baseRoutePaths.Length));
+        }
     }
 }

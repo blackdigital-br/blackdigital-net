@@ -22,5 +22,42 @@ namespace BlackDigital.Rest
         public bool Authorize { get; private set; }
 
         public bool ReturnIsSuccess { get; private set; }
+
+        public bool IsMatch(string method, string? route)
+        {
+            if (Enum.GetName(Method)?.ToLower() != method.ToLower())
+                return false;
+
+            if (string.IsNullOrWhiteSpace(Route)
+                && string.IsNullOrWhiteSpace(route))
+                return true;
+
+            if (route == null)
+                return false;
+
+            var routePaths = route?.Split('/');
+            var actionPaths = Route?.Split('/');
+
+            if (routePaths?.Length != actionPaths?.Length)
+                return false;
+
+            for (int i = 0; i < actionPaths.Length; i++)
+            {
+                if (actionPaths[i].StartsWith('{') && actionPaths[i].EndsWith('}'))
+                {
+                    if (actionPaths[i].Contains(':'))
+                    {
+
+                    }
+
+                    continue;
+                }
+
+                if (actionPaths[i].ToLower() != routePaths[i].ToLower())
+                    return false;
+            }
+
+            return true;
+        }
     }
 }
