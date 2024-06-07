@@ -408,8 +408,8 @@ namespace BlackDigital.Rest
             if (CustomHeaders.ContainsKey(Authorization))
                 CustomHeaders.Remove(Authorization);
 
-            
-            CustomHeaders.Add(Authorization,
+            if (customAuthentication != null)
+                CustomHeaders.Add(Authorization,
                     new List<string>() { $"{customAuthentication.Scheme} {customAuthentication.Parameter}" });
 
             UpdateHeaders();
