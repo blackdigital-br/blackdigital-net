@@ -170,6 +170,8 @@ namespace BlackDigital.Rest
             {
                 var responseAsString = await httpResponse.Content.ReadAsStringAsync();
 
+                Console.WriteLine(responseAsString);
+
                 if (typeof(T) == typeof(string))
                     return (T)(object)responseAsString;
 
