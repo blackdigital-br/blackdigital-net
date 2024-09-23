@@ -66,5 +66,32 @@ namespace BlackDigital.Test.Rest
             Assert.Equal(1, result.List.Count);
             Assert.Equal("MyDescription", result.List.First().Description);
         }
+
+        [Fact]
+        public async void ThrowBusinnesExcpetion()
+        {
+            var restClient = new RestClientMock();
+            var restService = new RestService<IServiceTest>(restClient);
+
+            try
+            {
+                var result = await restService.CallAsync(s => s.MyAction(null, default, null, null));
+
+                Assert.Null(result);
+
+                restClient.ThownType = RestThownType.OnlyBusiness;
+
+                result = await restService.CallAsync(s => s.MyAction(null, default, null, null));
+                throw new Exception("Should throw BusinessException");
+            }
+            catch (BusinessException bex)
+            {
+                Assert.Equal(404, bex.Code);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

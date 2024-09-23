@@ -16,6 +16,7 @@ namespace BlackDigital.Rest
 
         public RestClient(string baseAddress, HttpMessageHandler? hanlder = null)
         {
+            ThownType = RestThownType.OnlyBusiness;
             CustomHeaders = new();
             HttpHandler = hanlder;
             RequestsRetryConnections = new();
@@ -37,11 +38,14 @@ namespace BlackDigital.Rest
 
         public int TimeRetryConnection { get; set; }
 
+        public RestThownType ThownType { get; set; }
+
         public int RetryCount => RequestsRetryConnections.Count;
 
-        public event Action? Unauthorized;
-        public event Action? ConnectionError;
-        public event Action? ServerError;
+        public event RestEventHandler? Unauthorized;
+        public event RestEventHandler? Forbidden;
+        public event RestEventHandler? ConnectionError;
+        public event RestEventHandler? ServerError;
 
         public HttpClient Client { get; private set; }
         protected internal HttpMessageHandler? HttpHandler;
@@ -75,7 +79,7 @@ namespace BlackDigital.Rest
                                                                     Type? responseType = null,
                                                                     object? content = null,
                                                                     Dictionary<string, string>? headers = null,
-                                                                    bool thrownError = true)
+                                                                    RestThownType? throwType = null)
         {
             HttpContent? httpContent = null;
 
@@ -85,7 +89,7 @@ namespace BlackDigital.Rest
                 httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
             }
 
-            var httpResponse = await RequestAsync(method, url, httpContent, headers, thrownError);
+            var httpResponse = await RequestAsync(method, url, httpContent, headers, throwType);
 
             if (responseType == null)
                 return httpResponse.IsSuccessStatusCode;
@@ -106,8 +110,8 @@ namespace BlackDigital.Rest
         protected virtual async Task<HttpResponseMessage> RequestAsync(HttpMethod method, 
                                                           string url, 
                                                           HttpContent? content = null,
-                                                          Dictionary<string, string>? headers = null, 
-                                                          bool thrownError = true)
+                                                          Dictionary<string, string>? headers = null,
+                                                          RestThownType? throwType = null)
         {
             var request = new HttpRequestMessage(method, url);
 
@@ -120,25 +124,31 @@ namespace BlackDigital.Rest
             if (content != null)
                 request.Content = content;
 
-           return await RequestAsync(request, thrownError);
+           return await RequestAsync(request, throwType);
         }
 
-        protected virtual async Task<HttpResponseMessage> RequestAsync(HttpRequestMessage requestMessage, bool thrownError = false)
+        protected virtual async Task<HttpResponseMessage> RequestAsync(HttpRequestMessage requestMessage, RestThownType? throwType = null)
         {
+            throwType ??= ThownType;
+
             try
             {
                 var httpResponse = await Client.SendAsync(requestMessage);
 
                 if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    Unauthorized?.Invoke();
+                    Unauthorized?.Invoke(RestEventArgs.Create(requestMessage, httpResponse));
                 }
-                else if (thrownError && httpResponse.StatusCode.IsClientError())
+                else if (httpResponse.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    Forbidden?.Invoke(RestEventArgs.Create(requestMessage, httpResponse));
+                }
+                else if (throwType != RestThownType.None && httpResponse.StatusCode.IsClientError())
                 {
                     var responseAsString = await httpResponse.Content.ReadAsStringAsync();
                     BusinessException.Throw(responseAsString, (int)httpResponse.StatusCode);
                 }
-                else if (thrownError && httpResponse.StatusCode.IsServerError())
+                else if (throwType == RestThownType.All && httpResponse.StatusCode.IsServerError())
                     throw new Exception("Connection error", new(await httpResponse.Content.ReadAsStringAsync()));
 
                 EndRequest(requestMessage);
@@ -147,7 +157,8 @@ namespace BlackDigital.Rest
             }
             catch (HttpRequestException requestError)
             {
-                ErrorConnection(requestMessage, requestError, thrownError);
+
+                ErrorConnection(requestMessage, requestError, throwType.Value);
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
             catch (Exception ex)
@@ -155,16 +166,18 @@ namespace BlackDigital.Rest
                 Console.WriteLine(ex);
                 EndRequest(requestMessage);
 
-                if (thrownError)
-                    throw;
+                if (throwType == RestThownType.All
+                    || (throwType == RestThownType.OnlyBusiness && ex is BusinessException))
+                    throw ex;
+
 
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
         }
 
-        public async Task<T?> GetRestAsync<T>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<T?> GetRestAsync<T>(string url, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
-            var httpResponse = await RequestAsync(HttpMethod.Get, url, null, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Get, url, null, headers, throwType);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -179,14 +192,14 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<TReturn?> PostRestAsync<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<TReturn?> PostRestAsync<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
             try
             {
                 string jsonString = JsonCast.ToJson(sender);
                 var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-                var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, thrownError);
+                var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, throwType);
 
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -206,19 +219,19 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<bool> PostRestAsync<TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<bool> PostRestAsync<TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
             string jsonString = JsonCast.ToJson(sender);
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, throwType);
 
             return httpResponse.IsSuccessStatusCode;
         }
 
-        public async Task<TReturn?> PostRestAsync<TReturn>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<TReturn?> PostRestAsync<TReturn>(string url, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
-            var httpResponse = await RequestAsync(HttpMethod.Post, url, null, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Post, url, null, headers, throwType);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -233,12 +246,12 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<TReturn?> PutRestAsync<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<TReturn?> PutRestAsync<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
             string jsonString = JsonCast.ToJson(sender);
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var httpResponse = await RequestAsync(HttpMethod.Put, url, stringContent, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Put, url, stringContent, headers, throwType);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -253,19 +266,19 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<bool> PutRestAsync<TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<bool> PutRestAsync<TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
             string jsonString = JsonCast.ToJson(sender);
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var httpResponse = await RequestAsync(HttpMethod.Put, url, stringContent, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Put, url, stringContent, headers, throwType);
 
             return httpResponse.IsSuccessStatusCode;
         }
 
-        public async Task<TReturn?> PutRestAsync<TReturn>(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<TReturn?> PutRestAsync<TReturn>(string url, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
-            var httpResponse = await RequestAsync(HttpMethod.Put, url, null, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Put, url, null, headers, throwType);
 
             if (httpResponse.IsSuccessStatusCode)
             {
@@ -280,9 +293,9 @@ namespace BlackDigital.Rest
             return default;
         }
 
-        public async Task<bool> DeleteRestAsync(string url, Dictionary<string, string>? headers = null, bool thrownError = true)
+        public async Task<bool> DeleteRestAsync(string url, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
-            var httpResponse = await RequestAsync(HttpMethod.Put, url, null, headers, thrownError);
+            var httpResponse = await RequestAsync(HttpMethod.Put, url, null, headers, throwType);
 
             return httpResponse.IsSuccessStatusCode;
         }
@@ -291,7 +304,7 @@ namespace BlackDigital.Rest
 
         #region "Internal Methods"
 
-        protected void ErrorConnection(HttpRequestMessage request, HttpRequestException requestError, bool thrownError)
+        protected void ErrorConnection(HttpRequestMessage request, HttpRequestException requestError, RestThownType throwType)
         {
             Console.WriteLine(requestError);
 
@@ -301,9 +314,9 @@ namespace BlackDigital.Rest
                 StartRetryProcess();
             }
 
-            ConnectionError?.Invoke();
+            ConnectionError?.Invoke(RestEventArgs.Create(request, null));
 
-            if (thrownError)
+            if (throwType == RestThownType.All)
                 throw requestError;
         }
 
@@ -337,7 +350,7 @@ namespace BlackDigital.Rest
                 {
                     try
                     {
-                        RequestAsync(request, true).Wait();
+                        RequestAsync(request, RestThownType.All).Wait();
                     }
                     catch (HttpRequestException requestError)
                     {

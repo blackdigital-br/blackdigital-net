@@ -1,28 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Black Digital Core Framework</Title>
-	<Version>23.8.11.16</Version>
+	<Version>24.9.22.21</Version>
 	<PackageIcon>Logo128.png</PackageIcon>
 	<RepositoryUrl>https://github.com/blackdigital-br/blackdigital-net</RepositoryUrl>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<Description>Some resources used in various projects.</Description>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Rest\BaseService.cs.bck" />
-    <None Remove="Rest\RestServiceBuilder.cs.bck" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Rest\BaseService.cs.bck" />
-    <Compile Include="Rest\RestServiceBuilder.cs.bck" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\doc\images\Logo128.png">

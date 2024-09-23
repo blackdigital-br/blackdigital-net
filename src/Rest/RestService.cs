@@ -42,7 +42,7 @@ namespace BlackDigital.Rest
             var action = methodInfo.GetCustomAttribute<ActionAttribute>()
                 ?? throw new CustomAttributeFormatException("ActionAttribute");
 
-            Dictionary<string, object> arguments = new();
+            Dictionary<string, object> arguments = [];
 
             for (int i = 0; i < methodCall.Arguments.Count; i++)
             {
@@ -64,7 +64,7 @@ namespace BlackDigital.Rest
             var method = GetHttpMethod(action);
             var returnType = GetResponseType(methodInfo, action);
 
-            return await Client.RequestAsync(method, url, returnType, body, headers, false);
+            return await Client.RequestAsync(method, url, returnType, body, headers, null);
         }
 
         #region "Create Call"

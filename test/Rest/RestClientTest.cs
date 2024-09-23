@@ -1,4 +1,5 @@
-﻿using BlackDigital.Test.Mock;
+﻿using BlackDigital.Rest;
+using BlackDigital.Test.Mock;
 using System.Net.Http.Headers;
 
 namespace BlackDigital.Test.Rest
@@ -12,7 +13,7 @@ namespace BlackDigital.Test.Rest
 
             client.AddAuthentication(new AuthenticationHeaderValue("bearer", "ABCDEFGHIJKLMNOPQRSTUWXYZ"));
 
-            var test = await client.GetRestAsync<bool>("test", thrownError: false);
+            var test = await client.GetRestAsync<bool>("test", null, RestThownType.None);
 
             Assert.NotNull(client.LastRequest);
             Assert.Equal(1, client.LastRequest?.Headers.Count() ?? 0);
@@ -27,7 +28,7 @@ namespace BlackDigital.Test.Rest
 
             client.AddHeader("APP-TOKEN", "ABCDEFGHIJKLMNOPQRSTUWXYZ");
 
-            var test = await client.GetRestAsync<bool>("test", thrownError: false);
+            var test = await client.GetRestAsync<bool>("test", null, RestThownType.None);
 
             Assert.NotNull(client.LastRequest);
             Assert.Equal(1, client.LastRequest?.Headers.Count() ?? 0);
