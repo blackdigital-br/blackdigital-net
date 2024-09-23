@@ -1,8 +1,9 @@
-﻿
-namespace BlackDigital.Validations
+﻿namespace BlackDigital
 {
     public enum Symbol
     {
+        Equal,
+        NotEqual,
         LessThan,
         LessThanOrEqual,
         GreaterThan,

@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -73,6 +74,30 @@ namespace BlackDigital
                         .Cast<TAttribute>()
                         .SingleOrDefault();
 
+        public static TAttribute? GetSingleAttribute<TAttribute>(this MemberExpression memberExpression)
+            where TAttribute : Attribute
+        {
+            var value = memberExpression.Member.GetCustomAttribute(typeof(TAttribute), true) as TAttribute;
+
+            if (value == null)
+            {
+                var metaData = memberExpression.Member.DeclaringType.GetCustomAttribute(typeof(MetadataTypeAttribute), true) as MetadataTypeAttribute;
+                if (metaData != null)
+                {
+                    var mdProp = metaData.MetadataClassType.GetProperties()
+                             .ToList()
+                             .Where(p => p.Name == memberExpression.Member.Name)
+                             .FirstOrDefault();
+                    if (mdProp != null)
+                    {
+                        value = mdProp.GetCustomAttribute(typeof(TAttribute)) as TAttribute;
+                    }
+                }
+            }
+
+            return value;
+        }
+
         public static TAttribute[] GetAttributes<TAttribute>(this ParameterInfo parameter)
             where TAttribute : Attribute =>
                 parameter.GetCustomAttributes(typeof(TAttribute), true)
@@ -89,8 +114,7 @@ namespace BlackDigital
 
         #region "Get Data From Attributes"
 
-        public static DisplayAttribute? GetDisplay(this PropertyInfo property)
-            => property.GetSingleAttribute<DisplayAttribute>();
+        
 
         public static string GetDisplayName(this PropertyInfo property)
             => property.GetDisplay()?.Name ?? property.Name;

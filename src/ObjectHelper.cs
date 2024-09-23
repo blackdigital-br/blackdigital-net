@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
+using System.Resources;
 using System.Text.Json.Serialization;
 using System.Web;
 
@@ -76,6 +77,21 @@ namespace BlackDigital
                 return default;
             
             return item.ToJson().To<TCast>();
+        }
+
+        public static string? GetResourceValue(string? value, Type? resourceType)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            if (resourceType != null)
+            {
+                ResourceManager rm = new(resourceType);
+                var realValue = rm.GetString(value, CultureInfo.CurrentCulture);
+                return realValue;
+            }
+
+            return value;
         }
     }
 }
