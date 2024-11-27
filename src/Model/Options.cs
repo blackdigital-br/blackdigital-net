@@ -7,7 +7,7 @@ namespace BlackDigital.Model
     {
         public Options()
         {
-            Items = new OptionItem[0];
+            Items = [];
         }
 
         public Options(IEnumerable<OptionItem> items)

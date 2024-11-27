@@ -1,7 +1,7 @@
 ﻿
 namespace BlackDigital.Model
 {
-    public struct OptionItem
+    public class OptionItem
     {
         public Id Id { get; set; }
 

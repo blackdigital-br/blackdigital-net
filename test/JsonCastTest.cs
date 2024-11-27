@@ -1,3 +1,4 @@
+using BlackDigital.Model;
 using BlackDigital.Test.Mock;
 using System.Net;
 
@@ -46,5 +47,6 @@ namespace BlackDigital.Test
             Assert.Equal(obj.HttpStatus, objFromJson.HttpStatus);
             Assert.Equal(obj.Value, objFromJson.Value);
         }
+
     }
 }
