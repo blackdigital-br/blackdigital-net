@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Black Digital Core Framework</Title>
-	<Version>24.11.26.22</Version>
+	<Version>25.1.20.18</Version>
 	<PackageIcon>Logo128.png</PackageIcon>
 	<RepositoryUrl>https://github.com/blackdigital-br/blackdigital-net</RepositoryUrl>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>

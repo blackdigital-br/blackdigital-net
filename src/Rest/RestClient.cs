@@ -11,7 +11,7 @@ namespace BlackDigital.Rest
         public RestClient()
             : this("/api")
         {
-            
+
         }
 
         public RestClient(string baseAddress, HttpMessageHandler? hanlder = null)
@@ -26,7 +26,7 @@ namespace BlackDigital.Rest
                 Client = new(hanlder);
             else
                 Client = new();
-            
+
             Client.BaseAddress = new Uri(baseAddress);
         }
 
@@ -107,8 +107,8 @@ namespace BlackDigital.Rest
             return null;
         }
 
-        protected virtual async Task<HttpResponseMessage> RequestAsync(HttpMethod method, 
-                                                          string url, 
+        protected virtual async Task<HttpResponseMessage> RequestAsync(HttpMethod method,
+                                                          string url,
                                                           HttpContent? content = null,
                                                           Dictionary<string, string>? headers = null,
                                                           RestThownType? throwType = null)
@@ -124,7 +124,7 @@ namespace BlackDigital.Rest
             if (content != null)
                 request.Content = content;
 
-           return await RequestAsync(request, throwType);
+            return await RequestAsync(request, throwType);
         }
 
         protected virtual async Task<HttpResponseMessage> RequestAsync(HttpRequestMessage requestMessage, RestThownType? throwType = null)
@@ -157,8 +157,11 @@ namespace BlackDigital.Rest
             }
             catch (HttpRequestException requestError)
             {
+                if (throwType == RestThownType.All)
+                    throw requestError;
 
                 ErrorConnection(requestMessage, requestError, throwType.Value);
+
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
             catch (Exception ex)
@@ -194,26 +197,19 @@ namespace BlackDigital.Rest
 
         public async Task<TReturn?> PostRestAsync<TReturn, TSend>(string url, TSend sender, Dictionary<string, string>? headers = null, RestThownType? throwType = null)
         {
-            try
+            string jsonString = JsonCast.ToJson(sender);
+            var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, throwType);
+
+            if (httpResponse.IsSuccessStatusCode)
             {
-                string jsonString = JsonCast.ToJson(sender);
-                var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                var responseAsString = await httpResponse.Content.ReadAsStringAsync();
 
-                var httpResponse = await RequestAsync(HttpMethod.Post, url, stringContent, headers, throwType);
+                if (typeof(TReturn) == typeof(string))
+                    return (TReturn)(object)responseAsString;
 
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    var responseAsString = await httpResponse.Content.ReadAsStringAsync();
-
-                    if (typeof(TReturn) == typeof(string))
-                        return (TReturn)(object)responseAsString;
-
-                    return JsonCast.To<TReturn>(responseAsString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
+                return JsonCast.To<TReturn>(responseAsString);
             }
 
             return default;
@@ -328,7 +324,7 @@ namespace BlackDigital.Rest
 
         private void StartRetryProcess()
         {
-            lock (_lockThread) 
+            lock (_lockThread)
             {
                 if (_threadRun)
                 {
@@ -346,7 +342,7 @@ namespace BlackDigital.Rest
                 Thread.Sleep(TimeRetryConnection);
                 var allRequests = RequestsRetryConnections.ToArray();
 
-                foreach ( var request in allRequests)
+                foreach (var request in allRequests)
                 {
                     try
                     {
@@ -390,7 +386,7 @@ namespace BlackDigital.Rest
                 CustomHeaders.Add(key, new List<string>() { value });
 
             UpdateHeaders();
-            
+
             return this;
         }
 
@@ -398,7 +394,7 @@ namespace BlackDigital.Rest
         {
             if (CustomHeaders.ContainsKey(key))
                 CustomHeaders.Remove(key);
-            
+
             CustomHeaders.Add(key, new List<string>() { value });
 
             UpdateHeaders();
