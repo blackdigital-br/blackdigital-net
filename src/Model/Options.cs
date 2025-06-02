@@ -17,7 +17,7 @@ namespace BlackDigital.Model
 
         private OptionItem[] Items { get; set; }
 
-        public OptionItem? this[int key]
+        public OptionItem? this[Id key]
         {
             get
             {
@@ -28,16 +28,14 @@ namespace BlackDigital.Model
             }
         }
 
-        public bool ContainsKey(int key)
+        public bool ContainsKey(Id key)
         {
             return Items.Any(option => option.Id == key);
         }
 
-        public Options FilterConnections(string name, Id id)
-        {
-            return new Options(Items.Where(option => option.Connections.ContainsKey(name)
-                                && option.Connections[name].Contains(id)));
-        }
+        public Options FilterConnections(string name, Id id) 
+            => new Options(Items.Where(option => option.Connections.ContainsKey(name)
+                    && option.Connections[name].Contains(id)));
 
         public Options FilterLabel(string label)
         {
