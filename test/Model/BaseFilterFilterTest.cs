@@ -22,7 +22,7 @@ namespace BlackDigital.Test.Model
                 Take = 2,
                 Sort = new List<SortItem>
                 {
-                    new SortItem { Name = "Length", Asc = true }
+                    new SortItem { Name = "Length", SortAscending = true }
                 }
             };
 

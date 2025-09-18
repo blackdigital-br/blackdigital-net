@@ -36,10 +36,10 @@ namespace BlackDigital.Model
                 MemberExpression property = Expression.Property(parameter, orderBy.Name);
                 LambdaExpression lambda = Expression.Lambda(property, parameter);
 
-                string methodName = orderBy.Asc ? "OrderBy" : "OrderByDescending";
+                string methodName = orderBy.SortAscending != false ? "OrderBy" : "OrderByDescending";
 
                 if (!first)
-                    methodName = orderBy.Asc ? "ThenBy" : "ThenByDescending";
+                    methodName = orderBy.SortAscending != false ? "ThenBy" : "ThenByDescending";
 
                 Expression methodCallExpression = Expression.Call(typeof(Queryable), methodName,
                                       new Type[] { query.ElementType, property.Type },
