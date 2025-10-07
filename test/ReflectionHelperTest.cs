@@ -1,4 +1,4 @@
-﻿using BlackDigital.Rest;
+using BlackDigital.Rest;
 using BlackDigital.Test.Mock;
 using System.ComponentModel.DataAnnotations;
 
@@ -61,14 +61,14 @@ namespace BlackDigital.Test
         [Fact]
         public void GetAttributeFromParameter()
         {
-            var attributes = typeof(IServiceTest).GetMethod("MyAction").GetParameters().First().GetAttributes<RouteAttribute>();
+            var attributes = typeof(IServiceTest).GetMethod("MyAction").GetParameters().First().GetAttributes<PathAttribute>();
 
             Assert.Single(attributes);
-            Assert.Equal(typeof(RouteAttribute), attributes.First().GetType());
+            Assert.Equal(typeof(PathAttribute), attributes.First().GetType());
 
-            var attribute = typeof(IServiceTest).GetMethod("MyAction").GetParameters().First().GetSingleAttribute<RouteAttribute>();
+            var attribute = typeof(IServiceTest).GetMethod("MyAction").GetParameters().First().GetSingleAttribute<PathAttribute>();
             Assert.NotNull(attribute);
-            Assert.Equal(typeof(RouteAttribute), attribute.GetType());
+            Assert.Equal(typeof(PathAttribute), attribute.GetType());
         }
     }
 }

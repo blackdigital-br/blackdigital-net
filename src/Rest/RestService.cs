@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
@@ -74,7 +74,7 @@ namespace BlackDigital.Rest
                                      ActionAttribute actionAttribute,
                                      Dictionary<string, object> arguments)
         {
-            var parameters = RestParameter<RouteAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
+            var parameters = RestParameter<PathAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
 
             var urls = new List<string?>()
             {
@@ -119,7 +119,7 @@ namespace BlackDigital.Rest
             return parameter.Value;
         }
 
-        private static string? GetRouteUrl(string? route, List<RestParameter<RouteAttribute>> arguments)
+        private static string? GetRouteUrl(string? route, List<RestParameter<PathAttribute>> arguments)
         {
             if (route == null)
                 return null;

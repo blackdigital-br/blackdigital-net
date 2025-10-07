@@ -365,6 +365,41 @@
 
         #endregion "To..."
 
+        public bool IsGuid()
+        {
+            return TryToGuid() != null;
+        }
+
+        public bool IsShort()
+        {
+            return TryToShort() != null;
+        }
+
+        public bool IsUShort()
+        {
+            return TryToUShort() != null;
+        }
+
+        public bool IsInt()
+        {
+            return TryToInt() != null;
+        }
+
+        public bool IsUInt()
+        {
+            return TryToUInt() != null;
+        }
+
+        public bool IsLong()
+        {
+            return TryToLong() != null;
+        }
+
+        public bool IsULong()
+        {
+            return TryToULong() != null;
+        }
+
         #region "Operator To Id"
 
         public static implicit operator Id(string id) => new(id);

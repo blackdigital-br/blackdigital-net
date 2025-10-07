@@ -15,7 +15,7 @@ namespace BlackDigital.Test.Model
                     Label = "A",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] { 1 } }
+                        { "Parent", [ 1 ] }
                     }
                 },
                 new OptionItem
@@ -24,7 +24,7 @@ namespace BlackDigital.Test.Model
                     Label = "B",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] {2 } }
+                        { "Parent", [ 2 ] }
                     }
                 },
                 new OptionItem
@@ -33,7 +33,7 @@ namespace BlackDigital.Test.Model
                     Label = "C",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] {1 } }
+                        { "Parent", [ 1 ] }
                     }
                 },
                 new OptionItem
@@ -42,7 +42,7 @@ namespace BlackDigital.Test.Model
                     Label = "D",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] {2 } }
+                        { "Parent", [ 2 ] }
                     }
                 },
                 new OptionItem
@@ -51,7 +51,7 @@ namespace BlackDigital.Test.Model
                     Label = "E",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] { 1 } }
+                        { "Parent", [ 1 ] }
                     }
                 },
                 new OptionItem
@@ -60,7 +60,7 @@ namespace BlackDigital.Test.Model
                     Label = "F",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] { 2 } }
+                        { "Parent", [ 2 ] }
                     }
                 },
                 new OptionItem
@@ -69,7 +69,7 @@ namespace BlackDigital.Test.Model
                     Label = "G",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] { 1 } }
+                        { "Parent", [ 1 ] }
                     }
                 },
                 new OptionItem
@@ -78,7 +78,7 @@ namespace BlackDigital.Test.Model
                     Label = "H",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] { 2 } }
+                        { "Parent", [ 2 ] }
                     }
                 },
                 new OptionItem
@@ -87,7 +87,7 @@ namespace BlackDigital.Test.Model
                     Label = "I",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] {1 } }
+                        { "Parent",  [ 1 ] }
                     }
                 },
                 new OptionItem
@@ -96,7 +96,7 @@ namespace BlackDigital.Test.Model
                     Label = "J",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] {2 } }
+                        { "Parent",  [ 2 ] }
                     }
                 },
             });
@@ -117,7 +117,7 @@ namespace BlackDigital.Test.Model
                     Code = "C",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] {1 } }
+                        { "Parent",  [ 1 ] }
                     }
                 },
                 new OptionItem()
@@ -128,7 +128,7 @@ namespace BlackDigital.Test.Model
                     Code = "D",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] {2 } }
+                        { "Parent",  [ 2 ] }
                     }
                 },
                 new OptionItem()
@@ -139,7 +139,7 @@ namespace BlackDigital.Test.Model
                     Code = "E",
                     Connections = new Dictionary<string, ListId>
                     {
-                        { "Parent", new Id[] { 1 } }
+                        { "Parent", [ 1 ] }
                     }
                 },
             });

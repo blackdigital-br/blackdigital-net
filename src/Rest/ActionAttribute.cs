@@ -7,13 +7,19 @@ namespace BlackDigital.Rest
         public ActionAttribute(string? route = null, 
                                RestMethod method = RestMethod.Get, 
                                bool authorize = true,
-                               bool returnIsSuccess = false)
+                               bool returnIsSuccess = false,
+                               string? id = null,
+                               string? version = null)
         {
             Route = route;
             Method = method;
             Authorize = authorize;
             ReturnIsSuccess = returnIsSuccess;
+            Version = version;
+            Id = id;
         }
+
+        public string? Id { get; private set; }
 
         public string? Route { get; private set; }
 
@@ -22,6 +28,8 @@ namespace BlackDigital.Rest
         public bool Authorize { get; private set; }
 
         public bool ReturnIsSuccess { get; private set; }
+
+        public string? Version { get; private set; }
 
         public bool IsMatch(string method, string? route)
         {
