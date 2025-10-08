@@ -8,7 +8,7 @@ namespace BlackDigital.Rest
                                RestMethod method = RestMethod.Get, 
                                bool authorize = true,
                                bool returnIsSuccess = false,
-                               string? id = null,
+                               string? keyIdentifier = null,
                                string? version = null)
         {
             Route = route;
@@ -16,10 +16,10 @@ namespace BlackDigital.Rest
             Authorize = authorize;
             ReturnIsSuccess = returnIsSuccess;
             Version = version;
-            Id = id;
+            KeyIdentifier = keyIdentifier;
         }
 
-        public string? Id { get; private set; }
+        public string? KeyIdentifier { get; private set; }
 
         public string? Route { get; private set; }
 
