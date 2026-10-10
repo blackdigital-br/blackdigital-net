@@ -4,9 +4,18 @@ using System.Reflection;
 
 namespace BlackDigital.DataAnnotations
 {
+    /// <summary>
+    /// Validates that a property is required when another property has one of the specified values.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class RequiredIfPropertyAttribute : ValidationAttribute
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RequiredIfPropertyAttribute"/> class.
+        /// </summary>
+        /// <param name="otherProperty">The name of the other property to check.</param>
+        /// <param name="otherPropertyValue">The expected value of the other property.</param>
+        /// <param name="otherPropertyValues">Additional expected values of the other property.</param>
         public RequiredIfPropertyAttribute(string otherProperty, object otherPropertyValue, params object[] otherPropertyValues)
         : base("'{0}' is required")
         {
@@ -17,17 +26,35 @@ namespace BlackDigital.DataAnnotations
             OtherPropertyValues.Insert(0, otherPropertyValue);
         }
 
+        /// <summary>
+        /// Gets the name of the other property to check.
+        /// </summary>
         public string OtherProperty { get; private set; }
 
+        /// <summary>
+        /// Gets the list of values that, when matched by the other property, make this property required.
+        /// </summary>
         public List<object> OtherPropertyValues { get; private set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the condition is inverted.
+        /// </summary>
         public bool IsInverted { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating that this attribute requires a validation context.
+        /// </summary>
         public override bool RequiresValidationContext
         {
             get { return true; }
         }
 
+        /// <summary>
+        /// Validates that the property has a value when the other property matches one of the expected values.
+        /// </summary>
+        /// <param name="value">The value of the property being validated.</param>
+        /// <param name="validationContext">The validation context.</param>
+        /// <returns>A <see cref="ValidationResult"/> indicating success or failure.</returns>
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (validationContext == null)

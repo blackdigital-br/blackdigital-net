@@ -1,10 +1,20 @@
-﻿
+
 using System.Linq.Expressions;
 
 namespace BlackDigital.Model
 {
+    /// <summary>
+    /// Provides extension methods for applying <see cref="BaseFilter"/> parameters to <see cref="IQueryable{T}"/> queries.
+    /// </summary>
     public static class BaseFilterFilter
     {
+        /// <summary>
+        /// Applies both ordering and pagination from a <see cref="BaseFilter"/> to a query.
+        /// </summary>
+        /// <typeparam name="T">The type of the query elements.</typeparam>
+        /// <param name="query">The query to filter.</param>
+        /// <param name="filter">The filter to apply.</param>
+        /// <returns>The filtered query.</returns>
         public static IQueryable<T> ApplyFilter<T>(this IQueryable<T> query, BaseFilter filter)
         {
             return query
@@ -12,6 +22,13 @@ namespace BlackDigital.Model
                 .ApplyOnlyFilter(filter);
         }
 
+        /// <summary>
+        /// Applies only the pagination (Skip/Take) from a <see cref="BaseFilter"/> to a query.
+        /// </summary>
+        /// <typeparam name="T">The type of the query elements.</typeparam>
+        /// <param name="query">The query to filter.</param>
+        /// <param name="filter">The filter to apply.</param>
+        /// <returns>The filtered query.</returns>
         public static IQueryable<T> ApplyOnlyFilter<T>(this IQueryable<T> query, BaseFilter filter)
         {
             if (filter.Skip.HasValue)
@@ -23,6 +40,13 @@ namespace BlackDigital.Model
             return query;
         }
 
+        /// <summary>
+        /// Applies only the ordering from a <see cref="BaseFilter"/> to a query.
+        /// </summary>
+        /// <typeparam name="T">The type of the query elements.</typeparam>
+        /// <param name="query">The query to filter.</param>
+        /// <param name="filter">The filter to apply.</param>
+        /// <returns>The ordered query.</returns>
         public static IQueryable<T> ApplyOnlyOrderBy<T>(this IQueryable<T> query, BaseFilter filter)
         {
             if (filter.Sort == null || filter.Sort.Count <= 0)

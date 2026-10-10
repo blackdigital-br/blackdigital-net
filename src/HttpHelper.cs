@@ -5,33 +5,68 @@ using System.Web;
 
 namespace BlackDigital
 {
+    /// <summary>
+    /// Provides extension methods for <see cref="HttpStatusCode"/> and query string parsing.
+    /// </summary>
     public static class HttpHelper
     {
+        /// <summary>
+        /// Determines whether the status code represents an informational response (1xx).
+        /// </summary>
+        /// <param name="httpStatus">The HTTP status code.</param>
+        /// <returns><c>true</c> if the status code is in the 100-199 range; otherwise, <c>false</c>.</returns>
         public static bool IsInformational(this HttpStatusCode httpStatus)
         {
             return (int)httpStatus >= 100 && (int)httpStatus <= 199;
         }
 
+        /// <summary>
+        /// Determines whether the status code represents a successful response (2xx).
+        /// </summary>
+        /// <param name="httpStatus">The HTTP status code.</param>
+        /// <returns><c>true</c> if the status code is in the 200-299 range; otherwise, <c>false</c>.</returns>
         public static bool IsSuccess(this HttpStatusCode httpStatus)
         {
             return (int)httpStatus >= 200 && (int)httpStatus <= 299;
         }
 
+        /// <summary>
+        /// Determines whether the status code represents a redirection response (3xx).
+        /// </summary>
+        /// <param name="httpStatus">The HTTP status code.</param>
+        /// <returns><c>true</c> if the status code is in the 300-399 range; otherwise, <c>false</c>.</returns>
         public static bool IsRedirection(this HttpStatusCode httpStatus)
         {
             return (int)httpStatus >= 300 && (int)httpStatus <= 399;
         }
 
+        /// <summary>
+        /// Determines whether the status code represents a client error response (4xx).
+        /// </summary>
+        /// <param name="httpStatus">The HTTP status code.</param>
+        /// <returns><c>true</c> if the status code is in the 400-499 range; otherwise, <c>false</c>.</returns>
         public static bool IsClientError(this HttpStatusCode httpStatus)
         {
             return (int)httpStatus >= 400 && (int)httpStatus <= 499;
         }
 
+        /// <summary>
+        /// Determines whether the status code represents a server error response (5xx).
+        /// </summary>
+        /// <param name="httpStatus">The HTTP status code.</param>
+        /// <returns><c>true</c> if the status code is in the 500-599 range; otherwise, <c>false</c>.</returns>
         public static bool IsServerError(this HttpStatusCode httpStatus)
         {
             return (int)httpStatus >= 500 && (int)httpStatus <= 599;
         }
 
+        /// <summary>
+        /// Parses a query string into an instance of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize the query string into.</typeparam>
+        /// <param name="queryString">The query string to parse.</param>
+        /// <returns>An instance of <typeparamref name="T"/> populated from the query string values.</returns>
+        /// <exception cref="InvalidCastException">Thrown when the query string cannot be converted to <typeparamref name="T"/>.</exception>
         public static T FromQueryString<T>(this string queryString)
         {
             var result = FromQueryString(queryString, typeof(T));
@@ -42,6 +77,12 @@ namespace BlackDigital
             throw new InvalidCastException($"Could not convert query string to {typeof(T).FullName}.");
         }
 
+        /// <summary>
+        /// Parses a query string into an instance of the specified type.
+        /// </summary>
+        /// <param name="queryString">The query string to parse.</param>
+        /// <param name="type">The type to deserialize the query string into.</param>
+        /// <returns>An instance of the specified type populated from the query string values, or <c>null</c> if creation fails.</returns>
         public static object? FromQueryString(this string queryString, Type type)
         {
             var dictonary = HttpUtility.ParseQueryString(queryString ?? string.Empty);

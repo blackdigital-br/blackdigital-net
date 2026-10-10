@@ -4,17 +4,34 @@ using BlackDigital.Model;
 
 namespace BlackDigital.Converters
 {
+    /// <summary>
+    /// A JSON converter for <see cref="Id"/> that reads and writes numeric values when possible, or falls back to strings.
+    /// </summary>
     public class IdConverter : JsonConverter<Id>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdConverter"/> class.
+        /// </summary>
         public IdConverter() { }
 
-        public IdConverter(bool legacy) 
-        { 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdConverter"/> class, optionally using legacy (string-only) serialization.
+        /// </summary>
+        /// <param name="legacy">Whether to use legacy string-only serialization.</param>
+        public IdConverter(bool legacy)
+        {
             _legacy = legacy;
         }
 
         private readonly bool _legacy;
 
+        /// <summary>
+        /// Reads and converts the JSON to an <see cref="Id"/>.
+        /// </summary>
+        /// <param name="reader">The JSON reader.</param>
+        /// <param name="typeToConvert">The type to convert.</param>
+        /// <param name="options">The serialization options.</param>
+        /// <returns>The converted <see cref="Id"/>.</returns>
         public override Id Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (!_legacy && reader.TokenType == JsonTokenType.Number)
@@ -36,6 +53,12 @@ namespace BlackDigital.Converters
             return new Id(reader.GetString());
         }
 
+        /// <summary>
+        /// Writes an <see cref="Id"/> as JSON, using a numeric value when possible or a string otherwise.
+        /// </summary>
+        /// <param name="writer">The JSON writer.</param>
+        /// <param name="value">The <see cref="Id"/> value to write.</param>
+        /// <param name="options">The serialization options.</param>
         public override void Write(Utf8JsonWriter writer, Id value, JsonSerializerOptions options)
         {
             if (!_legacy)

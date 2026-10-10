@@ -4,8 +4,16 @@ using System.Text.RegularExpressions;
 
 namespace BlackDigital.Rest
 {
+    /// <summary>
+    /// Provides a strongly-typed wrapper for invoking REST service methods defined with <see cref="ServiceAttribute"/> and <see cref="ActionAttribute"/>.
+    /// </summary>
+    /// <typeparam name="TService">The type of the service interface or class.</typeparam>
     public class RestService<TService>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RestService{TService}"/> class.
+        /// </summary>
+        /// <param name="client">The <see cref="RestClient"/> used to execute requests.</param>
         public RestService(RestClient client)
         {
             Client = client;
@@ -13,6 +21,13 @@ namespace BlackDigital.Rest
 
         protected readonly RestClient Client;
 
+        /// <summary>
+        /// Calls a service method that returns a value, using the provided call configuration.
+        /// </summary>
+        /// <typeparam name="TReturn">The return type of the service method.</typeparam>
+        /// <param name="expression">An expression selecting the service method to call.</param>
+        /// <param name="callConfig">The call configuration (headers, query parameters, etc.).</param>
+        /// <returns>The deserialized response, or <c>null</c> if the request failed.</returns>
         public async Task<TReturn?> CallAsync<TReturn>(Expression<Func<TService, Task<TReturn>>> expression, RestCallConfig callConfig)
         {
             var result = await ExecuteRequestAsync(expression, callConfig);
@@ -20,20 +35,47 @@ namespace BlackDigital.Rest
             return result is TReturn ? (TReturn)result : default;
         }
 
+        /// <summary>
+        /// Calls a service method that returns a value, using the default call configuration.
+        /// </summary>
+        /// <typeparam name="TReturn">The return type of the service method.</typeparam>
+        /// <param name="expression">An expression selecting the service method to call.</param>
+        /// <returns>The deserialized response, or <c>null</c> if the request failed.</returns>
         public async Task<TReturn?> CallAsync<TReturn>(Expression<Func<TService, Task<TReturn>>> expression)
             => await CallAsync<TReturn>(expression, RestCallConfig.Create());
 
+        /// <summary>
+        /// Calls a service method that returns a value, using the specified API version.
+        /// </summary>
+        /// <typeparam name="TReturn">The return type of the service method.</typeparam>
+        /// <param name="expression">An expression selecting the service method to call.</param>
+        /// <param name="version">The API version to use.</param>
+        /// <returns>The deserialized response, or <c>null</c> if the request failed.</returns>
         public async Task<TReturn?> CallAsync<TReturn>(Expression<Func<TService, Task<TReturn>>> expression, string version)
             => await CallAsync<TReturn>(expression, RestCallConfig.Create().AddVersion(version));
 
+        /// <summary>
+        /// Calls a service method that does not return a value, using the provided call configuration.
+        /// </summary>
+        /// <param name="expression">An expression selecting the service method to call.</param>
+        /// <param name="callConfig">The call configuration (headers, query parameters, etc.).</param>
         public async Task CallAsync(Expression<Action<TService>> expression, RestCallConfig callConfig)
         {
             await ExecuteRequestAsync(expression, callConfig);
         }
 
+        /// <summary>
+        /// Calls a service method that does not return a value, using the default call configuration.
+        /// </summary>
+        /// <param name="expression">An expression selecting the service method to call.</param>
         public async Task CallAsync(Expression<Action<TService>> expression)
             => await CallAsync(expression, RestCallConfig.Create());
 
+        /// <summary>
+        /// Calls a service method that does not return a value, using the specified API version.
+        /// </summary>
+        /// <param name="expression">An expression selecting the service method to call.</param>
+        /// <param name="version">The API version to use.</param>
         public async Task CallAsync(Expression<Action<TService>> expression, string version)
             => await CallAsync(expression, RestCallConfig.Create().AddVersion(version));
 

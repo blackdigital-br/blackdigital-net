@@ -1,9 +1,21 @@
 
 namespace BlackDigital.Rest
 {
+    /// <summary>
+    /// Marks a method as a REST action and defines its route, HTTP method, and metadata.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class ActionAttribute : Attribute
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ActionAttribute"/> class.
+        /// </summary>
+        /// <param name="route">The route template for the action.</param>
+        /// <param name="method">The HTTP method.</param>
+        /// <param name="authorize">Whether the action requires authorization.</param>
+        /// <param name="returnIsSuccess">Whether the return value indicates success.</param>
+        /// <param name="keyIdentifier">The key identifier for the action.</param>
+        /// <param name="version">The API version.</param>
         public ActionAttribute(string? route = null, 
                                RestMethod method = RestMethod.Get, 
                                bool authorize = true,
@@ -19,18 +31,42 @@ namespace BlackDigital.Rest
             KeyIdentifier = keyIdentifier;
         }
 
+        /// <summary>
+        /// Gets the key identifier for the action.
+        /// </summary>
         public string? KeyIdentifier { get; private set; }
 
+        /// <summary>
+        /// Gets the route template for the action.
+        /// </summary>
         public string? Route { get; private set; }
 
+        /// <summary>
+        /// Gets the HTTP method.
+        /// </summary>
         public RestMethod Method { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the action requires authorization.
+        /// </summary>
         public bool Authorize { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the return value indicates success.
+        /// </summary>
         public bool ReturnIsSuccess { get; private set; }
 
+        /// <summary>
+        /// Gets the API version.
+        /// </summary>
         public string? Version { get; private set; }
 
+        /// <summary>
+        /// Determines whether the specified HTTP method and route match this action.
+        /// </summary>
+        /// <param name="method">The HTTP method to check.</param>
+        /// <param name="route">The route to check.</param>
+        /// <returns><c>true</c> if the method and route match; otherwise, <c>false</c>.</returns>
         public bool IsMatch(string method, string? route)
         {
             if (!string.Equals(Enum.GetName(Method), method, StringComparison.OrdinalIgnoreCase))

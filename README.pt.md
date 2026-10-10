@@ -1,6 +1,6 @@
 # Framework BlackDigital
 
-![Logo](doc/images/Logo128.png)
+![Logo](https://raw.githubusercontent.com/blackdigital-br/blackdigital-net/main/doc/images/Logo128.png)
 
 [![Versão NuGet](https://img.shields.io/nuget/v/BlackDigital)](https://www.nuget.org/packages/BlackDigital)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blue)](https://dotnet.microsoft.com/download/dotnet/10.0)
@@ -224,7 +224,7 @@ Contribuições são bem-vindas! Sinta-se à vontade para enviar um Pull Request
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este projeto está licenciado sob a Licença Apache 2.0 - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
 ## 🔗 Links
 
