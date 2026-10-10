@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>Black Digital Core Framework</Title>
-	<Version>25.10.8.15</Version>
+	<Version>26.10.10.21</Version>
 	<PackageIcon>Logo128.png</PackageIcon>
 	<RepositoryUrl>https://github.com/blackdigital-br/blackdigital-net</RepositoryUrl>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
