@@ -1,4 +1,4 @@
-﻿namespace BlackDigital.Model
+namespace BlackDigital.Model
 {
     public readonly struct Id : IComparable<Id>,
                                 IComparable<string>,
@@ -144,24 +144,22 @@
 
         #region "Equals"
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null)
                 return false;
 
-            string typeName = obj.GetType().FullName;
-
-            return typeName switch
+            return obj switch
             {
-                "BlackDigital.Id" => Equals((Id)obj),
-                "System.String" => Equals((string)obj),
-                "System.Guid" => Equals((Guid)obj),
-                "System.Int16" => Equals((short)obj),
-                "System.UInt16" => Equals((ushort)obj),
-                "System.Int32" => Equals((int)obj),
-                "System.UInt32" => Equals((uint)obj),
-                "System.Int64" => Equals((long)obj),
-                "System.UInt64" => Equals((ulong)obj),
+                Id otherId => Equals(otherId),
+                string otherString => Equals(otherString),
+                Guid otherGuid => Equals(otherGuid),
+                short otherShort => Equals(otherShort),
+                ushort otherUShort => Equals(otherUShort),
+                int otherInt => Equals(otherInt),
+                uint otherUInt => Equals(otherUInt),
+                long otherLong => Equals(otherLong),
+                ulong otherULong => Equals(otherULong),
                 _ => false,
             };
         }

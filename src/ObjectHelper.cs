@@ -1,4 +1,4 @@
-﻿
+
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
@@ -17,13 +17,13 @@ namespace BlackDigital
             string prefix = string.IsNullOrEmpty(fieldPrefix) ? "" : $"{fieldPrefix}=";
 
             if (item is null)
-                return $"";
+                return string.Empty;
 
             if (item is DateTime dateItem)
-                return $"{prefix}{dateItem.ToString("o", CultureInfo.InvariantCulture)}";
+                return $"{prefix}{HttpUtility.UrlEncode(dateItem.ToString("o", CultureInfo.InvariantCulture))}";
 
             if (item is DateTimeOffset dateOffsetItem)
-                return $"{prefix}{dateOffsetItem.ToString("o", CultureInfo.InvariantCulture).Substring(0, 19)}";
+                return $"{prefix}{HttpUtility.UrlEncode(dateOffsetItem.ToString("o", CultureInfo.InvariantCulture))}";
 
             if (item.GetType().IsValueType
                 || item is string)
@@ -32,12 +32,12 @@ namespace BlackDigital
             List<string> itens = new();
             int pos = 0;
 
-            if (item is IEnumerable)
+            if (item is IEnumerable values)
             {
-                foreach (object? valueItem in item as IEnumerable)
+                foreach (object? valueItem in values)
                 {
                     prefix = string.IsNullOrEmpty(fieldPrefix) ? "" : $"{fieldPrefix}[{pos++}]";
-                    itens.Add($"{ToUrlQueryString(valueItem, prefix)}");
+                    itens.Add(ToUrlQueryString(valueItem, prefix));
                 }
 
                 return string.Join("&", itens);

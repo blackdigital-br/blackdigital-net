@@ -1,4 +1,4 @@
-﻿
+
 namespace BlackDigital.Model
 {
     public class SortItem
@@ -11,7 +11,7 @@ namespace BlackDigital.Model
             SortAscending = sortAscending;
         }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public bool? SortAscending { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using System.Text.Json;
 using BlackDigital.Model;
 
@@ -13,7 +13,7 @@ namespace BlackDigital.Converters
             _legacy = legacy;
         }
 
-        private bool _legacy = false;
+        private readonly bool _legacy;
 
         public override Id Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -40,18 +40,18 @@ namespace BlackDigital.Converters
         {
             if (!_legacy)
             {
-                if (value.TryToInt() != null)
-                    writer.WriteNumberValue(value.TryToInt().Value);
-                else if (value.TryToUInt() != null)
-                    writer.WriteNumberValue(value.TryToUInt().Value);
-                else if (value.TryToLong() != null)
-                    writer.WriteNumberValue(value.TryToLong().Value);
-                else if (value.TryToULong() != null)
-                    writer.WriteNumberValue(value.TryToULong().Value);
-                else if (value.TryToShort() != null)
-                    writer.WriteNumberValue(value.TryToShort().Value);
-                else if (value.TryToUShort() != null)
-                    writer.WriteNumberValue(value.TryToUShort().Value);
+                if (value.TryToInt() is int intValue)
+                    writer.WriteNumberValue(intValue);
+                else if (value.TryToUInt() is uint uintValue)
+                    writer.WriteNumberValue(uintValue);
+                else if (value.TryToLong() is long longValue)
+                    writer.WriteNumberValue(longValue);
+                else if (value.TryToULong() is ulong ulongValue)
+                    writer.WriteNumberValue(ulongValue);
+                else if (value.TryToShort() is short shortValue)
+                    writer.WriteNumberValue(shortValue);
+                else if (value.TryToUShort() is ushort ushortValue)
+                    writer.WriteNumberValue(ushortValue);
                 else
                     writer.WriteStringValue(value.ToString());
             }

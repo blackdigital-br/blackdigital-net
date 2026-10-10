@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Net;
 using System.Reflection;
 using System.Web;
@@ -33,12 +33,21 @@ namespace BlackDigital
         }
 
         public static T FromQueryString<T>(this string queryString)
-            => (T)FromQueryString(queryString, typeof(T));
+        {
+            var result = FromQueryString(queryString, typeof(T));
+
+            if (result is T typedResult)
+                return typedResult;
+
+            throw new InvalidCastException($"Could not convert query string to {typeof(T).FullName}.");
+        }
 
         public static object? FromQueryString(this string queryString, Type type)
         {
             var dictonary = HttpUtility.ParseQueryString(queryString ?? string.Empty);
-            var dictonaryCast = dictonary.Cast<string>().ToDictionary(k => k, v => dictonary[v]);
+            var dictonaryCast = dictonary.AllKeys
+                                         .Where(k => k is not null)
+                                         .ToDictionary(k => k!, k => dictonary[k!]);
 
             return CastFromDictonary(dictonaryCast, type);
         }
@@ -126,18 +135,26 @@ namespace BlackDigital
                                            .OrderBy(item => item)
                                            .ToList();
 
-                object list;
-                Type itemType;
+                object? list;
+                Type? itemType;
 
                 if (type.IsArray)
                 {
                     itemType = type.GetElementType();
+                    if (itemType == null)
+                        return null;
+
                     list = Array.CreateInstance(itemType, objectsKeys.Count);
                 }
                 else
                 {
-                    itemType = type.GenericTypeArguments[0];
+                    itemType = type.GenericTypeArguments.FirstOrDefault();
+                    if (itemType == null)
+                        return null;
+
                     list = Activator.CreateInstance(type);
+                    if (list == null)
+                        return null;
                 }
 
                 if (dictonary.Any(item => item.Key.StartsWith($"{name}.", StringComparison.InvariantCultureIgnoreCase)))
@@ -178,24 +195,33 @@ namespace BlackDigital
 
             if (type == typeof(DateTime) 
                 || type == typeof(DateTime?))
-                return DateTime.Parse(dictonary[name]);
+            {
+                var dateValue = GetDictionaryValue(dictonary, name);
+                return dateValue == null ? null : DateTime.Parse(dateValue);
+            }
 
             if (type == typeof(DateTimeOffset)
                 || type == typeof(DateTimeOffset?))
-                return DateTimeOffset.Parse(dictonary[name]);
-
-            object value = null;
-
-            if (dictonary.Any(item => string.Compare(item.Key, name, StringComparison.InvariantCultureIgnoreCase) == 0))
             {
-                var item = dictonary.First(item => string.Compare(item.Key, name, StringComparison.InvariantCultureIgnoreCase) == 0);
-                value = item.Value;
+                var dateOffsetValue = GetDictionaryValue(dictonary, name);
+                return dateOffsetValue == null ? null : DateTimeOffset.Parse(dateOffsetValue);
             }
 
-            if (Nullable.GetUnderlyingType(type) != null)
-                return Convert.ChangeType(value, Nullable.GetUnderlyingType(type));
+            object? value = GetDictionaryValue(dictonary, name);
+
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            if (underlyingType != null)
+                return Convert.ChangeType(value, underlyingType);
 
             return Convert.ChangeType(value, type);
+        }
+
+        private static string? GetDictionaryValue(Dictionary<string, string?> dictonary, string name)
+        {
+            var item = dictonary.FirstOrDefault(item =>
+                string.Equals(item.Key, name, StringComparison.InvariantCultureIgnoreCase));
+
+            return item.Equals(default(KeyValuePair<string, string?>)) ? null : item.Value;
         }
     }
 }

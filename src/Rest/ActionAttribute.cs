@@ -1,4 +1,4 @@
-﻿
+
 namespace BlackDigital.Rest
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
@@ -33,20 +33,20 @@ namespace BlackDigital.Rest
 
         public bool IsMatch(string method, string? route)
         {
-            if (Enum.GetName(Method)?.ToLower() != method.ToLower())
+            if (!string.Equals(Enum.GetName(Method), method, StringComparison.OrdinalIgnoreCase))
                 return false;
 
             if (string.IsNullOrWhiteSpace(Route)
                 && string.IsNullOrWhiteSpace(route))
                 return true;
 
-            if (route == null)
+            if (route == null || string.IsNullOrWhiteSpace(Route))
                 return false;
 
-            var routePaths = route?.Split('/');
-            var actionPaths = Route?.Split('/');
+            var routePaths = route.Split('/');
+            var actionPaths = Route.Split('/');
 
-            if (routePaths?.Length != actionPaths?.Length)
+            if (routePaths.Length != actionPaths.Length)
                 return false;
 
             for (int i = 0; i < actionPaths.Length; i++)
@@ -61,7 +61,7 @@ namespace BlackDigital.Rest
                     continue;
                 }
 
-                if (actionPaths[i].ToLower() != routePaths[i].ToLower())
+                if (!string.Equals(actionPaths[i], routePaths[i], StringComparison.OrdinalIgnoreCase))
                     return false;
             }
 

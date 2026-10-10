@@ -1,4 +1,4 @@
-﻿
+
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -81,7 +81,12 @@ namespace BlackDigital
 
             if (value == null)
             {
-                var metaData = memberExpression.Member.DeclaringType.GetCustomAttribute(typeof(MetadataTypeAttribute), true) as MetadataTypeAttribute;
+                var declaringType = memberExpression.Member.DeclaringType;
+
+                if (declaringType == null)
+                    return null;
+
+                var metaData = declaringType.GetCustomAttribute(typeof(MetadataTypeAttribute), true) as MetadataTypeAttribute;
                 if (metaData != null)
                 {
                     var mdProp = metaData.MetadataClassType.GetProperties()

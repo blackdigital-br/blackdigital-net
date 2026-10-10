@@ -1,4 +1,4 @@
-﻿using BlackDigital.Converters;
+using BlackDigital.Converters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -6,6 +6,8 @@ namespace BlackDigital
 {
     public static class JsonCast
     {
+        private static readonly JsonSerializerOptions _options;
+
         static JsonCast()
         {
             Converters = new()
@@ -14,18 +16,13 @@ namespace BlackDigital
                 new TimeSpanConverter(),
                 new IdConverter(),
             };
+
+            _options = new JsonSerializerOptions().ConfigureJson();
         }
 
-        public static JsonSerializerOptions Options
-        {
-            get
-            {
-                JsonSerializerOptions options = new();
-                return options.ConfigureJson();
-            }
-        }
+        public static JsonSerializerOptions Options => _options;
 
-        public static List<JsonConverter> Converters { get; set; }
+        public static List<JsonConverter> Converters { get; }
 
         public static JsonSerializerOptions ConfigureJson(this JsonSerializerOptions options)
         {
@@ -46,7 +43,7 @@ namespace BlackDigital
             return JsonSerializer.Deserialize(json, type, Options);
         }
 
-        public static string ToJson(this object item)
+        public static string ToJson(this object? item)
         {
             return JsonSerializer.Serialize(item, Options);
         }

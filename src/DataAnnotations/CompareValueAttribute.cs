@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlackDigital.DataAnnotations
 {
@@ -21,7 +21,11 @@ namespace BlackDigital.DataAnnotations
                 return ValidationResult.Success;
 
             var errorMessage = FormatErrorMessage(validationContext.DisplayName);
-            return new ValidationResult(errorMessage, [validationContext.MemberName]);
+            var memberNames = validationContext.MemberName is null
+                ? Array.Empty<string>()
+                : new[] { validationContext.MemberName };
+
+            return new ValidationResult(errorMessage, memberNames);
         }
     }
 }

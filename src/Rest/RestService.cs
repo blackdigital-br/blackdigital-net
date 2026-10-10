@@ -55,7 +55,7 @@ namespace BlackDigital.Rest
             var action = methodInfo.GetCustomAttribute<ActionAttribute>()
                 ?? throw new CustomAttributeFormatException("ActionAttribute");
 
-            Dictionary<string, object> arguments = [];
+            Dictionary<string, object?> arguments = [];
 
             for (int i = 0; i < methodCall.Arguments.Count; i++)
             {
@@ -68,7 +68,7 @@ namespace BlackDigital.Rest
 
                 var value = Expression.Lambda(argument).Compile().DynamicInvoke();
 
-                arguments.Add(parameter.Name, value);
+                arguments.Add(parameter.Name ?? throw new InvalidOperationException("Parameter name cannot be null."), value);
             }
 
             var url = GenerateRoute(methodInfo, service, action, arguments, callConfig);
@@ -85,15 +85,15 @@ namespace BlackDigital.Rest
         private static string GenerateRoute(MethodInfo methodInfo,
                                      ServiceAttribute serviceAttribute,
                                      ActionAttribute actionAttribute,
-                                     Dictionary<string, object> arguments,
+                                     Dictionary<string, object?> arguments,
                                      RestCallConfig callConfig)
         {
             var parameters = RestParameter<PathAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
 
             var urls = new List<string?>()
             {
-                RestService<TService>.GetRouteUrl(serviceAttribute?.BaseRoute, parameters),
-                RestService<TService>.GetRouteUrl(actionAttribute?.Route, parameters)
+                RestService<TService>.GetRouteUrl(serviceAttribute.BaseRoute, parameters),
+                RestService<TService>.GetRouteUrl(actionAttribute.Route, parameters)
             };
 
             urls.Remove(null);
@@ -109,7 +109,7 @@ namespace BlackDigital.Rest
         private static Dictionary<string, string> GenerateHeaders(MethodInfo methodInfo,
                                      ServiceAttribute serviceAttribute,
                                      ActionAttribute actionAttribute,
-                                     Dictionary<string, object> arguments,
+                                     Dictionary<string, object?> arguments,
                                      RestCallConfig callConfig)
         {
             var parameters = RestParameter<HeaderAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
@@ -142,7 +142,7 @@ namespace BlackDigital.Rest
         private static object? GenerateBody(MethodInfo methodInfo,
                                      ServiceAttribute serviceAttribute,
                                      ActionAttribute actionAttribute,
-                                     Dictionary<string, object> arguments)
+                                     Dictionary<string, object?> arguments)
         {
             var parameters = RestParameter<BodyAttribute>.GetParameters(methodInfo.GetParameters(), arguments);
 
@@ -180,7 +180,7 @@ namespace BlackDigital.Rest
                                          MethodInfo methodInfo,
                                          ServiceAttribute serviceAttribute,
                                          ActionAttribute actionAttribute,
-                                         Dictionary<string, object> arguments,
+                                         Dictionary<string, object?> arguments,
                                          RestCallConfig callConfig)
         {
             var parameters = RestParameter<QueryAttribute>.GetParameters(methodInfo.GetParameters(), arguments);

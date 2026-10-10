@@ -1,26 +1,32 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace BlackDigital.Rest
 {
     internal class RestParameter<T>
         where T : Attribute
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public object Value { get; set; }
+        public object? Value { get; set; }
 
         public T? Attribute { get; set; }
 
         internal static List<RestParameter<T>> GetParameters(IEnumerable<ParameterInfo> parameters,
-                                                             Dictionary<string, object> arguments)
+                                                             Dictionary<string, object?> arguments)
         {
             return parameters
                 .Where(p => p.GetCustomAttribute<T>() != null)
-                .Select(p => new RestParameter<T>
+                .Select(p =>
                 {
-                    Name = p.Name,
-                    Value = arguments[p.Name],
-                    Attribute = p.GetCustomAttribute<T>()
+                    var parameterName = p.Name ?? string.Empty;
+                    arguments.TryGetValue(parameterName, out var value);
+
+                    return new RestParameter<T>
+                    {
+                        Name = parameterName,
+                        Value = value,
+                        Attribute = p.GetCustomAttribute<T>()
+                    };
                 }).ToList();
         }
     }
