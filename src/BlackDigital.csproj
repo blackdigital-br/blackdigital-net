@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>Black Digital Core Framework</Title>
 	<Version>25.10.8.15</Version>
 	<PackageIcon>Logo128.png</PackageIcon>
