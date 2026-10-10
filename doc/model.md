@@ -18,6 +18,11 @@ Generic interface that defines `Id` properties for different key types:
 #### Id (struct)
 Structure that encapsulates different types of identifiers and allows automatic conversions.
 
+**Highlights:**
+- Accepts `string`, numeric values, and `Guid`
+- Serializes compact GUID values without losing round-trip conversion
+- Exposes helper methods such as `TryToGuid()`, `TryToInt()`, `IsGuid()`, and `HasId`
+
 **Usage example**:
 ```csharp
 public class User : IId
@@ -36,9 +41,12 @@ if (id1.HasId)
 {
     Console.WriteLine($"ID: {id1}");
 }
+
+Guid? maybeGuid = id2.TryToGuid();
+bool isNumeric = id3.IsInt();
 ```
 
-## Audit Interfaces
+## Audit Contracts and Base Classes
 
 ### IActive
 **Purpose**: Control whether an entity is active or inactive.
@@ -55,6 +63,8 @@ public class Product : IActive
 ### ICreated
 **Purpose**: Track when an entity was created.
 
+Despite the `I` prefix, `ICreated` is a base class, not an interface. It is useful when you want to inherit the `Created` field and its validation attributes.
+
 ```csharp
 public class Order : ICreated
 {
@@ -64,7 +74,9 @@ public class Order : ICreated
 ```
 
 ### IUpdated
-**Purpose**: Track when an entity was updated (inherits from ICreated).
+**Purpose**: Track when an entity was updated (inherits from `ICreated`).
+
+`IUpdated` is also a base class. In practice, entities can inherit from it to reuse both `Created` and `Updated`.
 
 ```csharp
 public class Customer : IUpdated
@@ -76,7 +88,9 @@ public class Customer : IUpdated
 ```
 
 ### IDeleted
-**Purpose**: Implement logical deletion (soft delete) - inherits from IUpdated.
+**Purpose**: Implement logical deletion (soft delete) - inherits from `IUpdated`.
+
+`IDeleted` extends the audit chain with an optional `Deleted` timestamp.
 
 ```csharp
 public class Document : IDeleted
@@ -249,6 +263,9 @@ var found = options.FindText("product");
 
 // Filter by label
 var byLabel = options.FilterLabel("category");
+
+// Search by any connection ID
+var related = options.FilterConnectionsId(new Id(10));
 ```
 
 ## Auxiliary Classes
@@ -317,7 +334,14 @@ var filter = new BaseFilter
 
 ```csharp
 // Define entity
-public class Product : IId, IActive, ICreated, IUpdated, IDeleted
+public class Product : IId, IActive
+{
+    public Id Id { get; set; }
+    public string Name { get; set; }
+    public bool Active { get; set; }
+}
+
+public class AuditedProduct : IDeleted, IActive
 {
     public Id Id { get; set; }
     public string Name { get; set; }

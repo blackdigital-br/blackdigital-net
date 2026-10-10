@@ -18,6 +18,11 @@ Interface genérica que define propriedades `Id` para diferentes tipos de chave:
 #### Id (struct)
 Estrutura que encapsula diferentes tipos de identificadores e permite conversões automáticas.
 
+**Destaques:**
+- Aceita `string`, valores numéricos e `Guid`
+- Serializa `Guid` em formato compacto sem perder a conversão reversa
+- Expõe helpers como `TryToGuid()`, `TryToInt()`, `IsGuid()` e `HasId`
+
 **Exemplo de uso**:
 ```csharp
 public class Usuario : IId
@@ -36,9 +41,12 @@ if (id1.HasId)
 {
     Console.WriteLine($"ID: {id1}");
 }
+
+Guid? talvezGuid = id2.TryToGuid();
+bool eNumerico = id3.IsInt();
 ```
 
-## Interfaces de Auditoria
+## Contratos e Classes Base de Auditoria
 
 ### IActive
 **Propósito**: Controlar se uma entidade está ativa ou inativa.
@@ -55,6 +63,8 @@ public class Produto : IActive
 ### ICreated
 **Propósito**: Rastrear quando uma entidade foi criada.
 
+Apesar do prefixo `I`, `ICreated` é uma classe base, não uma interface. Ela é útil quando você quer herdar o campo `Created` e seus atributos de validação.
+
 ```csharp
 public class Pedido : ICreated
 {
@@ -64,7 +74,9 @@ public class Pedido : ICreated
 ```
 
 ### IUpdated
-**Propósito**: Rastrear quando uma entidade foi atualizada (herda de ICreated).
+**Propósito**: Rastrear quando uma entidade foi atualizada (herda de `ICreated`).
+
+`IUpdated` também é uma classe base. Na prática, a entidade pode herdá-la para reutilizar `Created` e `Updated`.
 
 ```csharp
 public class Cliente : IUpdated
@@ -76,7 +88,9 @@ public class Cliente : IUpdated
 ```
 
 ### IDeleted
-**Propósito**: Implementar exclusão lógica (soft delete) - herda de IUpdated.
+**Propósito**: Implementar exclusão lógica (soft delete) - herda de `IUpdated`.
+
+`IDeleted` estende a cadeia de auditoria com o campo opcional `Deleted`.
 
 ```csharp
 public class Documento : IDeleted
@@ -249,6 +263,9 @@ var encontradas = opcoes.FindText("produto");
 
 // Filtrar por rótulo
 var porLabel = opcoes.FilterLabel("categoria");
+
+// Buscar por qualquer ID presente nas conexões
+var relacionadas = opcoes.FilterConnectionsId(new Id(10));
 ```
 
 ## Classes Auxiliares
@@ -317,7 +334,14 @@ var filter = new BaseFilter
 
 ```csharp
 // Definir entidade
-public class Produto : IId, IActive, ICreated, IUpdated, IDeleted
+public class Produto : IId, IActive
+{
+    public Id Id { get; set; }
+    public string Nome { get; set; }
+    public bool Active { get; set; }
+}
+
+public class ProdutoAuditado : IDeleted, IActive
 {
     public Id Id { get; set; }
     public string Nome { get; set; }

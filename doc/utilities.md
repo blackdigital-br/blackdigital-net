@@ -178,6 +178,13 @@ Utilities for JSON serialization and deserialization with standardized configura
 - `ToJson(object item)` - Serializes object to JSON
 - `ConfigureJson(JsonSerializerOptions options)` - Configures default options
 
+**Default behaviors:**
+- Enables case-insensitive property names
+- Ignores `null` values when writing JSON
+- Registers `JsonStringEnumConverter` for enums
+- Registers `TimeSpanConverter` using the standard `"c"` format
+- Registers `IdConverter`, which writes numeric `Id` values as numbers when possible
+
 **Usage Example:**
 ```csharp
 // Serialize object
@@ -189,6 +196,8 @@ var user = jsonString.To<User>();
 // Configure custom options
 var options = new JsonSerializerOptions().ConfigureJson();
 ```
+
+If you need compatibility with legacy payloads where `Id` must always be serialized as string, you can add `new IdConverter(legacy: true)` to a custom `JsonSerializerOptions` instance.
 
 ### ObjectHelper
 
@@ -251,6 +260,26 @@ var queryParams = uri.GetQueryString();
 ```
 
 ## Miscellaneous Utilities
+
+### SecurityFilter
+
+Shared base abstraction for authentication and authorization contexts.
+
+**Main Properties:**
+- `UserId` - Current user identifier as `Id`
+- `Roles` - Current user roles
+
+**Usage Example:**
+```csharp
+public class ApiSecurityFilter : SecurityFilter
+{
+    public ApiSecurityFilter(Id userId, IEnumerable<string> roles)
+    {
+        UserId = userId;
+        Roles.AddRange(roles);
+    }
+}
+```
 
 ### LocalRandom
 

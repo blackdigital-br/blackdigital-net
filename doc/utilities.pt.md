@@ -178,6 +178,13 @@ Utilitários para serialização e deserialização JSON com configurações pad
 - `ToJson(object item)` - Serializa objeto para JSON
 - `ConfigureJson(JsonSerializerOptions options)` - Configura opções padrão
 
+**Comportamentos padrão:**
+- Habilita nomes de propriedades case-insensitive
+- Ignora valores `null` ao escrever JSON
+- Registra `JsonStringEnumConverter` para enums
+- Registra `TimeSpanConverter` usando o formato padrão `"c"`
+- Registra `IdConverter`, que grava `Id` numérico como número sempre que possível
+
 **Exemplo de Uso:**
 ```csharp
 // Serializar objeto
@@ -189,6 +196,8 @@ var user = jsonString.To<User>();
 // Configurar opções personalizadas
 var options = new JsonSerializerOptions().ConfigureJson();
 ```
+
+Se você precisar de compatibilidade com payloads legados onde `Id` deve ser sempre serializado como string, pode adicionar `new IdConverter(legacy: true)` em uma instância customizada de `JsonSerializerOptions`.
 
 ### ObjectHelper
 
@@ -251,6 +260,26 @@ var queryParams = uri.GetQueryString();
 ```
 
 ## Utilitários Diversos
+
+### SecurityFilter
+
+Abstração base compartilhada para contextos de autenticação e autorização.
+
+**Principais Propriedades:**
+- `UserId` - Identificador do usuário atual como `Id`
+- `Roles` - Papéis do usuário atual
+
+**Exemplo de Uso:**
+```csharp
+public class ApiSecurityFilter : SecurityFilter
+{
+    public ApiSecurityFilter(Id userId, IEnumerable<string> roles)
+    {
+        UserId = userId;
+        Roles.AddRange(roles);
+    }
+}
+```
 
 ### LocalRandom
 

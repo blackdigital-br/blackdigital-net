@@ -106,9 +106,24 @@ Marks parameters that will be added as query string.
 
 ```csharp
 [Action("users")]
-Task<List<User>> GetUsers([Query] int page, [Query] int size);
+Task<List<User>> GetUsers(
+    [Query(QueryParameterType.Parameter)] int page,
+    [Query(QueryParameterType.Parameter)] int size);
 
 // Generates: GET /api/users?page=1&size=10
+```
+
+`[Query]` supports two modes:
+- `QueryParameterType.Parameter`: sends `name=value` pairs using the parameter name or a custom name
+- `QueryParameterType.Raw`: expands the value with `ToUrlQueryString()`, which is ideal for complex filters and nested objects
+
+Example with raw object expansion:
+
+```csharp
+[Action("users/search")]
+Task<List<User>> Search([Query] UserSearchFilters filters);
+
+// Generates: GET /api/users/search?Name=John&Role=Admin
 ```
 
 ### [Body] - Request Body
@@ -167,11 +182,11 @@ public interface IProductService
 {
     [Action("search")]
     Task<PagedResult<Product>> Search(
-        [Query] string? name,
-        [Query] decimal? minPrice,
-        [Query] decimal? maxPrice,
-        [Query] int page = 1,
-        [Query] int size = 10);
+        [Query(QueryParameterType.Parameter)] string? name,
+        [Query(QueryParameterType.Parameter)] decimal? minPrice,
+        [Query(QueryParameterType.Parameter)] decimal? maxPrice,
+        [Query(QueryParameterType.Parameter)] int page = 1,
+        [Query(QueryParameterType.Parameter)] int size = 10);
 }
 
 // Usage:
@@ -249,6 +264,23 @@ var config = RestCallConfig.Create()
 var result = await service.CallAsync(s => s.GetData(), config);
 ```
 
+`AddVersion("2025-10-08")` adds `api-version=2025-10-08` to the query string. This is different from `[Service(version: ...)]` and `[Action(version: ...)]`, which send the version in the `x-api-version` header.
+
+### RestClient Configuration
+
+`RestClient` also exposes fluent helpers for shared configuration:
+
+```csharp
+var restClient = new RestClient("https://api.example.com")
+    .AddHeader("X-Tenant", "tenant-a")
+    .AddSingleHeader("X-Correlation-Id", Guid.NewGuid().ToString())
+    .AddAuthentication(new AuthenticationHeaderValue("Bearer", token));
+
+restClient.UpdateBaseAddress("https://api.backup.example.com");
+```
+
+These helpers are useful when multiple services share the same client instance.
+
 ### Error Handling
 
 ```csharp
@@ -267,7 +299,28 @@ restClient.Unauthorized += (args) => {
 restClient.Forbidden += (args) => {
     // Handle 403 error
 };
+
+restClient.ConnectionError += (args) => {
+    // Handle transport/network failures
+};
+
+restClient.ServerError += (args) => {
+    // Handle 5xx responses when ThownType == RestThownType.All
+};
 ```
+
+If you need automatic retry for transport failures, configure:
+
+```csharp
+restClient.RetryConection = true;
+restClient.TimeRetryConnection = 3000;
+```
+
+When an event is raised, `RestEventArgs` provides:
+- `Url`
+- `StatusCode`
+- `RequestHeaders`
+- `ResponseHeaders`
 
 ## How It Works Internally
 
@@ -317,7 +370,7 @@ public interface IProductService
     
     // Overrides with specific version: "2025-12-15"
     [Action("search", version: "2025-12-15")]
-    Task<List<Product>> Search([Query] string term);
+    Task<List<Product>> Search([Query(QueryParameterType.Parameter)] string term);
 }
 
 // Generated requests:

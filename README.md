@@ -3,7 +3,7 @@
 ![Logo](doc/images/Logo128.png)
 
 [![NuGet Version](https://img.shields.io/nuget/v/BlackDigital)](https://www.nuget.org/packages/BlackDigital)
-[![.NET](https://img.shields.io/badge/.NET-8.0-blue)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![.NET](https://img.shields.io/badge/.NET-10.0-blue)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![License](https://img.shields.io/github/license/blackdigital-br/blackdigital-net)](LICENSE)
 
 A comprehensive .NET framework providing essential utilities, automatic REST service generation, advanced data annotations, and model helpers for modern application development.
@@ -30,7 +30,7 @@ public interface IUserService
 // Usage
 var restClient = new RestClient("https://api.example.com");
 var userService = new RestService<IUserService>(restClient);
-var users = await userService.GetAllUsers();
+var users = await userService.CallAsync(s => s.GetAllUsers());
 ```
 
 ### 📝 **Advanced Data Annotations**
@@ -53,7 +53,7 @@ public class UserRegistration
 
 ### 🏗️ **Model Utilities**
 Base classes and interfaces for common patterns:
-- `IId`, `ICreated`, `IUpdated`, `IActive`, `IDeleted`
+- `IId` and `IActive` contracts plus audit base classes `ICreated`, `IUpdated`, `IDeleted`
 - Filtering and sorting helpers
 - Option lists and data builders
 
@@ -61,6 +61,7 @@ Base classes and interfaces for common patterns:
 Essential helpers for everyday development:
 - `HttpHelper` - HTTP utilities and extensions
 - `DateTimeHelper` - Date/time manipulation
+- `JsonCast` - Shared JSON options with built-in converters for enums, `Id`, and `TimeSpan`
 - `ReflectionHelper` - Reflection utilities
 - `ObjectHelper` - Object manipulation
 - `UriHelper` - URI building and manipulation
@@ -91,7 +92,7 @@ using BlackDigital.Rest;
 public interface IProductService
 {
     [Action]
-    Task<List<Product>> GetProducts([Query] string? search = null);
+    Task<List<Product>> GetProducts([Query(QueryParameterType.Parameter)] string? search = null);
     
     [Action("{id}")]
     Task<Product> GetProduct([Path] int id);
@@ -111,8 +112,8 @@ var client = new RestClient("https://api.mystore.com");
 var productService = new RestService<IProductService>(client);
 
 // Make calls
-var products = await productService.GetProducts("laptop");
-var product = await productService.GetProduct(1);
+var products = await productService.CallAsync(s => s.GetProducts("laptop"));
+var product = await productService.CallAsync(s => s.GetProduct(1));
 ```
 
 ### 2. Data Annotations Example
@@ -144,20 +145,24 @@ public class ContactForm
 ```csharp
 using BlackDigital.Model;
 
-public class User : IId, ICreated, IUpdated, IActive
+public class User : IId, IActive
 {
-    public int Id { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
+    public Id Id { get; set; }
     public bool Active { get; set; }
     
     public string Name { get; set; }
     public string Email { get; set; }
 }
 
+public class AuditedUser : IUpdated
+{
+    public Id Id { get; set; }
+    public string Name { get; set; }
+}
+
 // Use with filters
-var filter = new ActiveFilter<User> { Active = true };
-var userFilter = new BaseFilter { Search = "john", Take = 10 };
+var activeUsers = query.FilterActive(true);
+var pagedUsers = query.ApplyFilter(new BaseFilter { Take = 10 });
 ```
 
 ## 📚 Documentation
@@ -165,12 +170,14 @@ var userFilter = new BaseFilter { Search = "john", Take = 10 };
 ### Core Documentation
 - **[REST Services](doc/rest-services.md)** - Complete guide to automatic REST client generation
 - **[Data Annotations](doc/data-annotations.md)** - Advanced validation and display attributes
+- **[Data Builder](doc/data-builder.md)** - Metadata inspection helpers for dynamic forms and UI generation
 - **[Model Utilities](doc/model.md)** - Base classes and model helpers
 - **[Utilities](doc/utilities.md)** - Helper classes and extensions
 
 ### Portuguese Documentation
 - **[Serviços REST](doc/rest-services.pt.md)** - Guia completo de geração automática de clientes REST
 - **[Data Annotations](doc/data-annotations.pt.md)** - Atributos avançados de validação e exibição
+- **[Data Builder](doc/data-builder.pt.md)** - Helpers de inspeção de metadados para formulários dinâmicos e geração de UI
 - **[Utilitários de Modelo](doc/model.pt.md)** - Classes base e helpers de modelo
 - **[Utilitários](doc/utilities.pt.md)** - Classes auxiliares e extensões
 
@@ -183,16 +190,17 @@ BlackDigital/
 ├── Rest/                    # Automatic REST service generation
 │   ├── RestService<T>      # Main service class
 │   ├── RestClient          # HTTP client wrapper
-│   └── Attributes/         # Service and action attributes
+│   └── Attributes/         # Service, action, and parameter attributes
 ├── DataAnnotations/        # Advanced validation attributes
 │   ├── Validation/         # Email, Mobile, RequiredIf, etc.
 │   └── Display/           # ShowIf, NotShow, etc.
-├── Model/                  # Base interfaces and classes
-│   ├── Interfaces/         # IId, ICreated, IUpdated, etc.
-│   └── Filters/           # BaseFilter, ActiveFilter, etc.
+├── DataBuilder/           # Metadata inspection for dynamic UIs
+├── Model/                 # Identification, audit, filters, and options
+├── Converters/            # JSON converters for framework types
+├── Authentication/        # Shared security abstractions
 └── Utilities/             # Helper classes
     ├── HttpHelper         # HTTP utilities
-    ├── DateTimeHelper     # Date/time helpers
+    ├── JsonCast           # Shared JSON configuration
     └── ReflectionHelper   # Reflection utilities
 ```
 
