@@ -19,6 +19,9 @@ namespace BlackDigital.Rest
             Client = client;
         }
 
+        /// <summary>
+        /// The <see cref="RestClient"/> used to execute the service requests.
+        /// </summary>
         protected readonly RestClient Client;
 
         /// <summary>

@@ -72,6 +72,7 @@ public interface IUserService
 - `baseRoute`: Service base route
 - `authorize`: If requires authorization (default: false)
 - `version`: API version in date format (e.g., "2025-10-08"). This version is automatically sent in the HTTP header `x-api-version` so the backend can handle different API versions when necessary
+- `policy`: Authorization policy prefix for the service. When combined with an action-level policy, the final policy name is `Service.Policy.Action.Policy` (e.g. `Category.Read`). When set alone (without an action policy), it requires the full resource permission (e.g. `Category`)
 
 ### [Action] - Action Definition
 
@@ -88,6 +89,7 @@ Task<List<User>> SearchUsers([Body] SearchRequest request);
 - `authorize`: If requires authorization
 - `returnIsSuccess`: If returns only success/failure
 - `version`: Specific action version in date format (e.g., "2025-10-08"). Overrides the version defined in [Service]
+- `policy`: Authorization policy suffix for the action. Combined with the service-level policy to form the final policy name (e.g. service `Category` + action `Read` = `Category.Read`)
 
 ### [Path] - Route Parameters
 

@@ -16,8 +16,14 @@ namespace BlackDigital.DataBuilder
             Property = property;
         }
 
+        /// <summary>
+        /// The <see cref="TypeBuilder"/> that owns this property.
+        /// </summary>
         protected readonly TypeBuilder Type;
-        
+
+        /// <summary>
+        /// The <see cref="PropertyInfo"/> that this builder wraps.
+        /// </summary>
         protected readonly PropertyInfo Property;
 
         /// <summary>

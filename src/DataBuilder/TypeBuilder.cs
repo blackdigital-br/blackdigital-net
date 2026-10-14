@@ -24,6 +24,9 @@ namespace BlackDigital.DataBuilder
                                    .ToList();
         }
 
+        /// <summary>
+        /// The type being inspected by this builder.
+        /// </summary>
         protected readonly Type Type;
         private List<PropertyBuilder> TypeProperties { get; set; }
 

@@ -89,8 +89,20 @@ namespace BlackDigital.Rest
         /// Gets the underlying <see cref="HttpClient"/> used by this client.
         /// </summary>
         public HttpClient Client { get; private set; }
+
+        /// <summary>
+        /// The HTTP message handler used by the underlying <see cref="HttpClient"/>, if a custom one was provided.
+        /// </summary>
         protected internal HttpMessageHandler? HttpHandler;
+
+        /// <summary>
+        /// The custom headers applied to every request sent by this client.
+        /// </summary>
         protected Dictionary<string, List<string>> CustomHeaders;
+
+        /// <summary>
+        /// The requests that are pending retry due to a connection error.
+        /// </summary>
         protected List<HttpRequestMessage> RequestsRetryConnections;
 
         private bool _threadRun;
@@ -146,6 +158,16 @@ namespace BlackDigital.Rest
 
         #region "Rest Methods"
 
+        /// <summary>
+        /// Sends an HTTP request and deserializes the response into the specified type.
+        /// </summary>
+        /// <param name="method">The HTTP method to use.</param>
+        /// <param name="url">The request URL.</param>
+        /// <param name="responseType">The type to deserialize the response into, or <c>null</c> to ignore the body.</param>
+        /// <param name="content">The request body content, or <c>null</c>.</param>
+        /// <param name="headers">Additional headers for this request, or <c>null</c>.</param>
+        /// <param name="throwType">Defines which HTTP error statuses should throw an exception, or <c>null</c> to use the default.</param>
+        /// <returns>The deserialized response, or <c>null</c>.</returns>
         internal protected virtual async Task<object?> RequestAsync(HttpMethod method,
                                                                     string url,
                                                                     Type? responseType = null,
@@ -460,6 +482,11 @@ namespace BlackDigital.Rest
 
         #region "Internal Methods"
 
+        /// <summary>
+        /// Handles a connection error by logging it, queuing the request for retry, and raising the <see cref="ConnectionError"/> event.
+        /// </summary>
+        /// <param name="request">The request that failed.</param>
+        /// <param name="requestError">The exception thrown during the request.</param>
         protected void ErrorConnection(HttpRequestMessage request, HttpRequestException requestError)
         {
             Console.WriteLine(requestError);
@@ -473,6 +500,10 @@ namespace BlackDigital.Rest
             ConnectionError?.Invoke(RestEventArgs.Create(request, null));
         }
 
+        /// <summary>
+        /// Finalizes a request by disposing it and removing it from the retry queue.
+        /// </summary>
+        /// <param name="request">The request to finalize.</param>
         protected void EndRequest(HttpRequestMessage request)
         {
             request.Dispose();
@@ -620,6 +651,9 @@ namespace BlackDigital.Rest
             UpdateHeaders();
         }
 
+        /// <summary>
+        /// Synchronizes the custom headers into the underlying <see cref="HttpClient"/> default request headers.
+        /// </summary>
         protected virtual void UpdateHeaders()
         {
             foreach (var header in CustomHeaders)
