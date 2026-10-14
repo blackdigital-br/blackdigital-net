@@ -16,12 +16,20 @@ namespace BlackDigital.Rest
         /// <param name="returnIsSuccess">Whether the return value indicates success.</param>
         /// <param name="keyIdentifier">The key identifier for the action.</param>
         /// <param name="version">The API version.</param>
-        public ActionAttribute(string? route = null, 
-                               RestMethod method = RestMethod.Get, 
+        /// <param name="policy">The authorization policy suffix for the action. Combined with the service-level policy to form the final policy name (e.g. service <c>Category</c> + action <c>Read</c> = <c>Category.Read</c>).</param>
+        /// <param name="name">The display name of the action.</param>
+        /// <param name="description">The description of the action.</param>
+        /// <param name="resourceType">The resource type used to resolve localized name and description.</param>
+        public ActionAttribute(string? route = null,
+                               RestMethod method = RestMethod.Get,
                                bool authorize = true,
                                bool returnIsSuccess = false,
                                string? keyIdentifier = null,
-                               string? version = null)
+                               string? version = null,
+                               string? policy = null,
+                               string? name = null,
+                               string? description = null,
+                               Type? resourceType = null)
         {
             Route = route;
             Method = method;
@@ -29,6 +37,10 @@ namespace BlackDigital.Rest
             ReturnIsSuccess = returnIsSuccess;
             Version = version;
             KeyIdentifier = keyIdentifier;
+            Policy = policy;
+            Name = name;
+            Description = description;
+            ResourceType = resourceType;
         }
 
         /// <summary>
@@ -60,6 +72,46 @@ namespace BlackDigital.Rest
         /// Gets the API version.
         /// </summary>
         public string? Version { get; private set; }
+
+        /// <summary>
+        /// Gets the authorization policy suffix for the action.
+        /// Combined with the service-level <see cref="ServiceAttribute.Policy"/>
+        /// to form the final policy name (e.g. <c>Category.Read</c>).
+        /// </summary>
+        public string? Policy { get; private set; }
+
+        /// <summary>
+        /// Gets the display name of the action.
+        /// </summary>
+        public string? Name { get; private set; }
+
+        /// <summary>
+        /// Gets the description of the action.
+        /// </summary>
+        public string? Description { get; private set; }
+
+        /// <summary>
+        /// Gets the resource type used to resolve localized name and description.
+        /// </summary>
+        public Type? ResourceType { get; private set; }
+
+        /// <summary>
+        /// Gets the localized action name.
+        /// </summary>
+        /// <returns>The resolved action name.</returns>
+        public string GetName()
+        {
+            return ObjectHelper.GetResourceValue(Name, ResourceType) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the localized action description.
+        /// </summary>
+        /// <returns>The resolved action description.</returns>
+        public string GetDescription()
+        {
+            return ObjectHelper.GetResourceValue(Description, ResourceType) ?? string.Empty;
+        }
 
         /// <summary>
         /// Determines whether the specified HTTP method and route match this action.
