@@ -32,32 +32,5 @@ namespace BlackDigital.Test
             Assert.Equal(string.Empty, attribute.GetServiceName());
             Assert.Equal(string.Empty, attribute.GetServiceDescription());
         }
-
-        [Fact]
-        public void Policy_WhenNotSet_DefaultsToNull()
-        {
-            var attribute = new ServiceAttribute("api/users");
-
-            Assert.Null(attribute.Policy);
-        }
-
-        [Fact]
-        public void Policy_WhenSetViaConstructor_ReturnsValue()
-        {
-            var attribute = new ServiceAttribute("api/users", policy: "Category");
-
-            Assert.Equal("Category", attribute.Policy);
-        }
-
-        [Fact]
-        public void Policy_CanBeSetViaProperty()
-        {
-            var attribute = new ServiceAttribute("api/users")
-            {
-                Policy = "Category"
-            };
-
-            Assert.Equal("Category", attribute.Policy);
-        }
     }
 }

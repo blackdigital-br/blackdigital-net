@@ -61,7 +61,7 @@ var user = await userService.CallAsync(s => s.GetUserById(123));
 Defines the base route and global service configurations.
 
 ```csharp
-[Service("api/users", authorize: true, version: "2025-10-08")]
+[Service("api/users", version: "2025-10-08")]
 public interface IUserService
 {
     // methods...
@@ -70,26 +70,22 @@ public interface IUserService
 
 **Parameters:**
 - `baseRoute`: Service base route
-- `authorize`: If requires authorization (default: false)
 - `version`: API version in date format (e.g., "2025-10-08"). This version is automatically sent in the HTTP header `x-api-version` so the backend can handle different API versions when necessary
-- `policy`: Authorization policy prefix for the service. When combined with an action-level policy, the final policy name is `Service.Policy.Action.Policy` (e.g. `Category.Read`). When set alone (without an action policy), it requires the full resource permission (e.g. `Category`)
 
 ### [Action] - Action Definition
 
 Defines the specific behavior of each method.
 
 ```csharp
-[Action("search", method: RestMethod.Post, authorize: false)]
+[Action("search", method: RestMethod.Post)]
 Task<List<User>> SearchUsers([Body] SearchRequest request);
 ```
 
 **Parameters:**
 - `route`: Specific action route
 - `method`: HTTP method (Get, Post, Put, Delete, Patch)
-- `authorize`: If requires authorization
 - `returnIsSuccess`: If returns only success/failure
 - `version`: Specific action version in date format (e.g., "2025-10-08"). Overrides the version defined in [Service]
-- `policy`: Authorization policy suffix for the action. Combined with the service-level policy to form the final policy name (e.g. service `Category` + action `Read` = `Category.Read`)
 
 ### [Path] - Route Parameters
 
@@ -210,10 +206,10 @@ public interface IFileService
 }
 ```
 
-### Example 4: Authentication and Versioning
+### Example 4: Versioning
 
 ```csharp
-[Service("api/users", authorize: true, version: "2025-10-08")]
+[Service("api/users", version: "2025-10-08")]
 public interface IUserService
 {
     [Action("profile")]
