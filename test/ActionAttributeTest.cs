@@ -5,39 +5,19 @@ namespace BlackDigital.Test
     public class ActionAttributeTest
     {
         [Fact]
-        public void Policy_WhenNotSet_DefaultsToNull()
-        {
-            var attribute = new ActionAttribute();
-
-            Assert.Null(attribute.Policy);
-        }
-
-        [Fact]
-        public void Policy_WhenSetViaConstructor_ReturnsValue()
-        {
-            var attribute = new ActionAttribute(policy: "Read");
-
-            Assert.Equal("Read", attribute.Policy);
-        }
-
-        [Fact]
-        public void Policy_DoesNotAffectOtherProperties()
+        public void Constructor_SetsProperties()
         {
             var attribute = new ActionAttribute("search",
                                                  method: RestMethod.Post,
-                                                 authorize: false,
                                                  returnIsSuccess: true,
                                                  keyIdentifier: "id",
-                                                 version: "2025-10-08",
-                                                 policy: "Create");
+                                                 version: "2025-10-08");
 
             Assert.Equal("search", attribute.Route);
             Assert.Equal(RestMethod.Post, attribute.Method);
-            Assert.False(attribute.Authorize);
             Assert.True(attribute.ReturnIsSuccess);
             Assert.Equal("id", attribute.KeyIdentifier);
             Assert.Equal("2025-10-08", attribute.Version);
-            Assert.Equal("Create", attribute.Policy);
         }
 
         [Fact]

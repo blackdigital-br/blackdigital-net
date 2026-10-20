@@ -12,32 +12,26 @@ namespace BlackDigital.Rest
         /// </summary>
         /// <param name="route">The route template for the action.</param>
         /// <param name="method">The HTTP method.</param>
-        /// <param name="authorize">Whether the action requires authorization.</param>
         /// <param name="returnIsSuccess">Whether the return value indicates success.</param>
         /// <param name="keyIdentifier">The key identifier for the action.</param>
         /// <param name="version">The API version.</param>
-        /// <param name="policy">The authorization policy suffix for the action. Combined with the service-level policy to form the final policy name (e.g. service <c>Category</c> + action <c>Read</c> = <c>Category.Read</c>).</param>
         /// <param name="name">The display name of the action.</param>
         /// <param name="description">The description of the action.</param>
         /// <param name="resourceType">The resource type used to resolve localized name and description.</param>
         public ActionAttribute(string? route = null,
                                RestMethod method = RestMethod.Get,
-                               bool authorize = true,
                                bool returnIsSuccess = false,
                                string? keyIdentifier = null,
                                string? version = null,
-                               string? policy = null,
                                string? name = null,
                                string? description = null,
                                Type? resourceType = null)
         {
             Route = route;
             Method = method;
-            Authorize = authorize;
             ReturnIsSuccess = returnIsSuccess;
             Version = version;
             KeyIdentifier = keyIdentifier;
-            Policy = policy;
             Name = name;
             Description = description;
             ResourceType = resourceType;
@@ -59,11 +53,6 @@ namespace BlackDigital.Rest
         public RestMethod Method { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether the action requires authorization.
-        /// </summary>
-        public bool Authorize { get; private set; }
-
-        /// <summary>
         /// Gets a value indicating whether the return value indicates success.
         /// </summary>
         public bool ReturnIsSuccess { get; private set; }
@@ -72,13 +61,6 @@ namespace BlackDigital.Rest
         /// Gets the API version.
         /// </summary>
         public string? Version { get; private set; }
-
-        /// <summary>
-        /// Gets the authorization policy suffix for the action.
-        /// Combined with the service-level <see cref="ServiceAttribute.Policy"/>
-        /// to form the final policy name (e.g. <c>Category.Read</c>).
-        /// </summary>
-        public string? Policy { get; private set; }
 
         /// <summary>
         /// Gets the display name of the action.

@@ -61,7 +61,7 @@ var user = await userService.CallAsync(s => s.GetUserById(123));
 Define a rota base e configurações globais do serviço.
 
 ```csharp
-[Service("api/users", authorize: true, version: "2025-10-08")]
+[Service("api/users", version: "2025-10-08")]
 public interface IUserService
 {
     // métodos...
@@ -70,26 +70,22 @@ public interface IUserService
 
 **Parâmetros:**
 - `baseRoute`: Rota base do serviço
-- `authorize`: Se requer autorização (padrão: false)
 - `version`: Versão da API no formato de data (ex: "2025-10-08"). Esta versão é automaticamente enviada no header HTTP `x-api-version` para que o backend possa tratar diferentes versões da API quando necessário
-- `policy`: Prefixo da política de autorização do serviço. Quando combinado com uma política de ação, o nome final da política é `Service.Policy.Action.Policy` (ex: `Category.Read`). Quando definido sozinho (sem uma política de ação), exige a permissão completa do recurso (ex: `Category`)
 
 ### [Action] - Definição da Ação
 
 Define o comportamento específico de cada método.
 
 ```csharp
-[Action("search", method: RestMethod.Post, authorize: false)]
+[Action("search", method: RestMethod.Post)]
 Task<List<User>> SearchUsers([Body] SearchRequest request);
 ```
 
 **Parâmetros:**
 - `route`: Rota específica da ação
 - `method`: Método HTTP (Get, Post, Put, Delete, Patch)
-- `authorize`: Se requer autorização
 - `returnIsSuccess`: Se retorna apenas sucesso/falha
 - `version`: Versão específica da ação no formato de data (ex: "2025-10-08"). Sobrescreve a versão definida no [Service]
-- `policy`: Sufixo da política de autorização da ação. Combinado com a política do serviço para formar o nome final da política (ex: serviço `Category` + ação `Read` = `Category.Read`)
 
 ### [Path] - Parâmetros de Rota
 
@@ -210,10 +206,10 @@ public interface IFileService
 }
 ```
 
-### Exemplo 4: Autenticação e Versionamento
+### Exemplo 4: Versionamento
 
 ```csharp
-[Service("api/users", authorize: true, version: "2025-10-08")]
+[Service("api/users", version: "2025-10-08")]
 public interface IUserService
 {
     [Action("profile")]

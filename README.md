@@ -53,7 +53,8 @@ public class UserRegistration
 
 ### 🏗️ **Model Utilities**
 Base classes and interfaces for common patterns:
-- `IId` and `IActive` contracts plus audit base classes `ICreated`, `IUpdated`, `IDeleted`
+- `IId`, `IActive`, `ICreated`, `IUpdated`, and `IDeleted` contracts
+- Audit base classes `CreatedModel`, `UpdatedModel`, and `DeletedModel`
 - Filtering and sorting helpers
 - Option lists and data builders
 
@@ -154,7 +155,7 @@ public class User : IId, IActive
     public string Email { get; set; }
 }
 
-public class AuditedUser : IUpdated
+public class AuditedUser : UpdatedModel
 {
     public Id Id { get; set; }
     public string Name { get; set; }

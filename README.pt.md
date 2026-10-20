@@ -53,7 +53,8 @@ public class RegistroUsuario
 
 ### 🏗️ **Utilitários de Modelo**
 Classes base e interfaces para padrões comuns:
-- Contratos `IId` e `IActive`, com classes base de auditoria `ICreated`, `IUpdated`, `IDeleted`
+- Contratos `IId`, `IActive`, `ICreated`, `IUpdated` e `IDeleted`
+- Classes base de auditoria `CreatedModel`, `UpdatedModel` e `DeletedModel`
 - Helpers de filtragem e ordenação
 - Listas de opções e construtores de dados
 
@@ -154,7 +155,7 @@ public class Usuario : IId, IActive
     public string Email { get; set; }
 }
 
-public class UsuarioAuditado : IUpdated
+public class UsuarioAuditado : UpdatedModel
 {
     public Id Id { get; set; }
     public string Nome { get; set; }

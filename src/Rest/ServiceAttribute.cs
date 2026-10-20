@@ -10,38 +10,27 @@ namespace BlackDigital.Rest
         /// Initializes a new instance of the <see cref="ServiceAttribute"/> class.
         /// </summary>
         /// <param name="baseRoute">The base route of the service.</param>
-        /// <param name="authorize">Whether the service requires authorization.</param>
         /// <param name="version">The API version.</param>
         /// <param name="name">The display name of the service.</param>
         /// <param name="description">The description of the service.</param>
         /// <param name="resourceType">The resource type used to resolve localized name and description.</param>
-        /// <param name="policy">The authorization policy prefix for the service. When combined with an action-level policy, the final policy name is <c>Service.Policy.Action.Policy</c> (e.g. <c>Category.Read</c>).</param>
         public ServiceAttribute(string baseRoute,
-            bool authorize = false,
             string? version = null,
             string? name = null,
             string? description = null,
-            Type? resourceType = null,
-            string? policy = null)
+            Type? resourceType = null)
         {
             BaseRoute = baseRoute;
-            Authorize = authorize;
             Version = version;
             Name = name;
             Description = description;
             ResourceType = resourceType;
-            Policy = policy;
         }
 
         /// <summary>
         /// Gets or sets the base route of the service.
         /// </summary>
         public string BaseRoute { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the service requires authorization.
-        /// </summary>
-        public bool Authorize { get; set; }
 
         /// <summary>
         /// Gets or sets the API version.
@@ -62,14 +51,6 @@ namespace BlackDigital.Rest
         /// Gets or sets the resource type used to resolve localized name and description.
         /// </summary>
         public Type? ResourceType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the authorization policy prefix for the service.
-        /// When combined with an action-level <see cref="ActionAttribute.Policy"/>,
-        /// the final policy name is <c>Service.Policy.Action.Policy</c> (e.g. <c>Category.Read</c>).
-        /// When set alone (without an action policy), it requires the full resource permission (e.g. <c>Category</c>).
-        /// </summary>
-        public string? Policy { get; set; }
 
         /// <summary>
         /// Determines whether the specified route matches this service's base route.
