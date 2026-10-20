@@ -17,7 +17,7 @@ Keep examples and docs aligned with the real API surface of BlackDigital.
 
 - direct method calls on `RestService<TService>` instead of `CallAsync(...)`
 - `[Query]` examples using simple scalars without clarifying `Parameter` vs `Raw`
-- treating `ICreated`, `IUpdated`, and `IDeleted` as interfaces
+- redeclaring audit properties when the entity could inherit `CreatedModel`, `UpdatedModel`, or `DeletedModel`
 - model examples that use unsupported `BaseFilter` fields
 - summaries that skip `DataBuilder`, `JsonCast`, or `Id`
 

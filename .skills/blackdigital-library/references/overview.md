@@ -50,6 +50,9 @@ BlackDigital is a shared .NET library with reusable REST, data annotation, model
   - `src/Model/ICreated.cs`
   - `src/Model/IUpdated.cs`
   - `src/Model/IDeleted.cs`
+  - `src/Model/CreatedModel.cs`
+  - `src/Model/UpdatedModel.cs`
+  - `src/Model/DeletedModel.cs`
   - `src/Model/*.cs` filter helpers
 - Serialization
   - `src/JsonCast.cs`
@@ -64,6 +67,6 @@ BlackDigital is a shared .NET library with reusable REST, data annotation, model
 
 - Treating `RestService<TService>` like a generated runtime proxy with direct method calls
 - Assuming `[Query]` defaults to named scalar parameters
-- Assuming `ICreated`, `IUpdated`, and `IDeleted` are interfaces
+- Assuming the audit fields come from the `ICreated`, `IUpdated`, and `IDeleted` interfaces instead of the `CreatedModel`, `UpdatedModel`, and `DeletedModel` base classes
 - Ignoring `Id` and replacing it with plain primitives in examples
 - Forgetting `DataBuilder` when summarizing the library

@@ -39,8 +39,8 @@ Read [references/rest.md](references/rest.md) for details before editing REST co
 
 ### Model
 
-- `IId` and `IActive` are interfaces.
-- `ICreated`, `IUpdated`, and `IDeleted` are base classes despite the `I` prefix.
+- `IId`, `IActive`, `ICreated`, `IUpdated`, and `IDeleted` are interfaces.
+- `CreatedModel`, `UpdatedModel`, and `DeletedModel` are the audit base classes that implement those contracts and carry the `[Required]` attributes.
 - The `Id` struct is a core abstraction. Prefer it over assuming plain `int` or `Guid` identifiers.
 - Filter helpers such as `ActiveFilter`, `CreatedFilter`, `UpdatedFilter`, `DeletedFilter`, `IdFilter`, and `BaseFilterFilter` are extension-based utilities.
 

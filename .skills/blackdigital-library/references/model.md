@@ -11,14 +11,13 @@ Prefer using `Id` in examples unless the task is explicitly about typed alternat
 
 ## Audit types
 
-Important naming trap:
+- `IActive`, `ICreated`, `IUpdated`, and `IDeleted` are interfaces.
+- `ICreated` exposes `DateTime Created { get; set; }`.
+- `IUpdated : ICreated` adds `DateTime Updated { get; set; }`.
+- `IDeleted : IUpdated` adds `DateTime? Deleted { get; set; }`.
+- `CreatedModel`, `UpdatedModel`, and `DeletedModel` are the ready-made base classes that implement the chain and keep the `[Required]` attributes.
 
-- `IActive` is an interface
-- `ICreated` is a base class
-- `IUpdated` is a base class that inherits `ICreated`
-- `IDeleted` is a base class that inherits `IUpdated`
-
-Do not write examples that implement `ICreated`, `IUpdated`, or `IDeleted` as if they were interfaces.
+Prefer the base classes for new entities. Implement the interfaces directly when the entity already declares the audit properties or must inherit from another base class.
 
 Correct shape:
 
@@ -29,13 +28,10 @@ public class User : IId, IActive
     public bool Active { get; set; }
 }
 
-public class AuditedUser : IDeleted, IActive
+public class AuditedUser : DeletedModel, IActive
 {
     public Id Id { get; set; }
     public bool Active { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
-    public DateTime? Deleted { get; set; }
 }
 ```
 

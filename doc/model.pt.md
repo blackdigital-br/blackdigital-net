@@ -63,7 +63,7 @@ public class Produto : IActive
 ### ICreated
 **Propósito**: Rastrear quando uma entidade foi criada.
 
-Apesar do prefixo `I`, `ICreated` é uma classe base, não uma interface. Ela é útil quando você quer herdar o campo `Created` e seus atributos de validação.
+`ICreated` é uma interface que expõe `DateTime Created { get; set; }`. Implemente-a quando a entidade já declara o campo, ou herde de `CreatedModel` para reutilizar o campo e seu atributo de validação `[Required]`.
 
 ```csharp
 public class Pedido : ICreated
@@ -71,34 +71,35 @@ public class Pedido : ICreated
     public Id Id { get; set; }
     public DateTime Created { get; set; }
 }
+
+// Ou reutilize a implementação da classe base
+public class PedidoModel : CreatedModel
+{
+    public Id Id { get; set; }
+}
 ```
 
 ### IUpdated
-**Propósito**: Rastrear quando uma entidade foi atualizada (herda de `ICreated`).
+**Propósito**: Rastrear quando uma entidade foi atualizada (estende `ICreated`).
 
-`IUpdated` também é uma classe base. Na prática, a entidade pode herdá-la para reutilizar `Created` e `Updated`.
+`IUpdated` é uma interface. A classe `UpdatedModel` implementa toda a cadeia, então a entidade herda `Created` e `Updated`.
 
 ```csharp
-public class Cliente : IUpdated
+public class Cliente : UpdatedModel
 {
     public Id Id { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
 }
 ```
 
 ### IDeleted
-**Propósito**: Implementar exclusão lógica (soft delete) - herda de `IUpdated`.
+**Propósito**: Implementar exclusão lógica (soft delete) - estende `IUpdated`.
 
-`IDeleted` estende a cadeia de auditoria com o campo opcional `Deleted`.
+`IDeleted` é uma interface, e `DeletedModel` estende a cadeia de auditoria com o campo opcional `Deleted`.
 
 ```csharp
-public class Documento : IDeleted
+public class Documento : DeletedModel
 {
     public Id Id { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
-    public DateTime? Deleted { get; set; }
 }
 ```
 
@@ -341,14 +342,11 @@ public class Produto : IId, IActive
     public bool Active { get; set; }
 }
 
-public class ProdutoAuditado : IDeleted, IActive
+public class ProdutoAuditado : DeletedModel, IActive
 {
     public Id Id { get; set; }
     public string Nome { get; set; }
     public bool Active { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
-    public DateTime? Deleted { get; set; }
 }
 
 // Usar filtros

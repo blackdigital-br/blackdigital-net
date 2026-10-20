@@ -63,7 +63,7 @@ public class Product : IActive
 ### ICreated
 **Purpose**: Track when an entity was created.
 
-Despite the `I` prefix, `ICreated` is a base class, not an interface. It is useful when you want to inherit the `Created` field and its validation attributes.
+`ICreated` is an interface exposing `DateTime Created { get; set; }`. Implement it when the entity already declares the field, or inherit from `CreatedModel` to reuse the field and its `[Required]` validation attribute.
 
 ```csharp
 public class Order : ICreated
@@ -71,34 +71,35 @@ public class Order : ICreated
     public Id Id { get; set; }
     public DateTime Created { get; set; }
 }
+
+// Or reuse the base class implementation
+public class OrderModel : CreatedModel
+{
+    public Id Id { get; set; }
+}
 ```
 
 ### IUpdated
-**Purpose**: Track when an entity was updated (inherits from `ICreated`).
+**Purpose**: Track when an entity was updated (extends `ICreated`).
 
-`IUpdated` is also a base class. In practice, entities can inherit from it to reuse both `Created` and `Updated`.
+`IUpdated` is an interface. `UpdatedModel` implements the whole chain so entities inherit both `Created` and `Updated`.
 
 ```csharp
-public class Customer : IUpdated
+public class Customer : UpdatedModel
 {
     public Id Id { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
 }
 ```
 
 ### IDeleted
-**Purpose**: Implement logical deletion (soft delete) - inherits from `IUpdated`.
+**Purpose**: Implement logical deletion (soft delete) - extends `IUpdated`.
 
-`IDeleted` extends the audit chain with an optional `Deleted` timestamp.
+`IDeleted` is an interface, and `DeletedModel` extends the audit chain with an optional `Deleted` timestamp.
 
 ```csharp
-public class Document : IDeleted
+public class Document : DeletedModel
 {
     public Id Id { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
-    public DateTime? Deleted { get; set; }
 }
 ```
 
@@ -341,14 +342,11 @@ public class Product : IId, IActive
     public bool Active { get; set; }
 }
 
-public class AuditedProduct : IDeleted, IActive
+public class AuditedProduct : DeletedModel, IActive
 {
     public Id Id { get; set; }
     public string Name { get; set; }
     public bool Active { get; set; }
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
-    public DateTime? Deleted { get; set; }
 }
 
 // Use filters
